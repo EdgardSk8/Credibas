@@ -46,7 +46,9 @@ export function DashboardPage() {
     );
   }
 
-  const data = query.data as DashboardMetrics;
+  if (!query.data) return <LoadingBlock label="Calculando tu cartera…" />;
+
+  const data = query.data;
   const totals = data.totals;
   const collectionProgress =
     totals.expectedTodayCents > 0 ? Math.min(100, Math.round((totals.collectedTodayCents / totals.expectedTodayCents) * 100)) : 0;

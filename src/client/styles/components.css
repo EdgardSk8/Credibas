@@ -275,6 +275,12 @@
   justify-content: space-between;
   gap: var(--space-4);
   margin-bottom: var(--space-4);
+  flex-wrap: wrap;
+}
+
+.card-header .input[type='date'] {
+  width: 138px;
+  min-width: 0;
 }
 
 .card-title {

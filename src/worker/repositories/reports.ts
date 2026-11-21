@@ -150,24 +150,26 @@ export async function getMonthlySeries(db: Db, orgId: string, months: number) {
 
 export async function getRecentActivity(db: Db, orgId: string, limit = 10) {
   return db.all<{ id: string; type: string; title: string; amount_cents: number | null; created_at: number; actor_name: string | null }>(
-    `SELECT p.id, 'payment' AS type, 'Pago recibido · ' || l.code AS title, p.amount_cents, p.created_at,
-            u.full_name AS actor_name
-       FROM payments p
-       JOIN loans l ON l.id = p.loan_id
-       LEFT JOIN users u ON u.id = p.created_by
-      WHERE p.org_id = ? AND p.status = 'confirmed'
-      UNION ALL
-     SELECT l.id, 'loan', 'Préstamo desembolsado · ' || l.code, l.principal_cents, l.created_at, u.full_name
-       FROM loans l
-       LEFT JOIN users u ON u.id = l.created_by
-      WHERE l.org_id = ? AND l.deleted_at IS NULL
-      UNION ALL
-     SELECT c.id, 'client', 'Cliente registrado · ' || c.full_name, NULL, c.created_at, u.full_name
-       FROM clients c
-       LEFT JOIN users u ON u.id = c.created_by
-      WHERE c.org_id = ? AND c.deleted_at IS NULL
-      ORDER BY created_at DESC
-      LIMIT ?`,
+    `SELECT * FROM (
+       SELECT p.id AS id, 'payment' AS type, 'Pago recibido · ' || l.code AS title,
+              p.amount_cents AS amount_cents, p.created_at AS created_at, u.full_name AS actor_name
+         FROM payments p
+         JOIN loans l ON l.id = p.loan_id
+         LEFT JOIN users u ON u.id = p.created_by
+        WHERE p.org_id = ? AND p.status = 'confirmed'
+       UNION ALL
+       SELECT l.id, 'loan', 'Préstamo desembolsado · ' || l.code, l.principal_cents, l.created_at, u.full_name
+         FROM loans l
+         LEFT JOIN users u ON u.id = l.created_by
+        WHERE l.org_id = ? AND l.deleted_at IS NULL
+       UNION ALL
+       SELECT c.id, 'client', 'Cliente registrado · ' || c.full_name, NULL, c.created_at, u.full_name
+         FROM clients c
+         LEFT JOIN users u ON u.id = c.created_by
+        WHERE c.org_id = ? AND c.deleted_at IS NULL
+     ) AS activity
+     ORDER BY activity.created_at DESC
+     LIMIT ?`,
     [orgId, orgId, orgId, limit],
   );
 }

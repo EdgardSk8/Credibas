@@ -1,0 +1,22 @@
+# Copia este archivo como .dev.vars para desarrollo local.
+# .dev.vars está ignorado por git.
+
+APP_ENV=development
+APP_URL=http://localhost:5173
+APP_NAME=Credibas
+EMAIL_PROVIDER=console
+PAYMENTS_PROVIDER=manual
+
+# Iteraciones PBKDF2. 600000 es el valor recomendado; puedes bajarlo en local.
+PASSWORD_ITERATIONS=600000
+
+# Turnstile (obligatorio en producción)
+# TURNSTILE_SECRET=1x0000000000000000000000000000000AA
+
+# Correo transaccional (si EMAIL_PROVIDER=resend)
+# RESEND_API_KEY=re_xxxxxxxxx
+# EMAIL_FROM=no-reply@credibas.app
+# EMAIL_FROM_NAME=Credibas
+
+# Webhook de facturación
+# BILLING_WEBHOOK_SECRET=cambia-esto-por-un-secreto-largo
