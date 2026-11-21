@@ -103,11 +103,11 @@ export interface UpcomingRow {
   currency: 'NIO' | 'USD';
 }
 
-export async function getUpcomingInstallments(db: Db, orgId: string, limit = 8): Promise<UpcomingRow[]> {
+export async function getUpcomingInstallments(db: Db, orgId: string, today: string, limit = 8): Promise<UpcomingRow[]> {
   return db.all<UpcomingRow>(
     `SELECT i.id AS installment_id, l.id AS loan_id, l.code AS loan_code, c.full_name AS client_name,
             i.due_date, i.total_cents, ${OUTSTANDING_SQL} AS outstanding_cents,
-            CASE WHEN i.due_date < date('now') THEN 1 ELSE 0 END AS overdue, l.currency
+            CASE WHEN i.due_date < ? THEN 1 ELSE 0 END AS overdue, l.currency
        FROM installments i
        JOIN loans l ON l.id = i.loan_id
        JOIN clients c ON c.id = l.client_id
@@ -115,7 +115,7 @@ export async function getUpcomingInstallments(db: Db, orgId: string, limit = 8):
         AND l.deleted_at IS NULL AND i.status IN ${OPEN_INSTALLMENT_STATUSES}
       ORDER BY i.due_date ASC
       LIMIT ?`,
-    [orgId, limit],
+    [today, orgId, limit],
   );
 }
 

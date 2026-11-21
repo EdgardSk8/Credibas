@@ -38,7 +38,7 @@ reportRoutes.get('/dashboard', requirePermission(PERMISSIONS.reportsRead), async
   const { from, to, today } = resolveRange(c, 30);
 
   const totals = await getDashboardTotals(db, orgId, from, to, today);
-  const upcoming = await getUpcomingInstallments(db, orgId, 8);
+  const upcoming = await getUpcomingInstallments(db, orgId, today, 8);
   const monthly = await getMonthlySeries(db, orgId, 6);
   const activity = await getRecentActivity(db, orgId, 10);
 

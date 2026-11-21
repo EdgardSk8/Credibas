@@ -78,6 +78,20 @@ const timezones = [
   'America/Argentina/Buenos_Aires',
 ];
 
+const timezoneLabels: Record<string, string> = {
+  'America/Managua': 'Managua (GMT-6)',
+  'America/Guatemala': 'Guatemala (GMT-6)',
+  'America/Tegucigalpa': 'Tegucigalpa (GMT-6)',
+  'America/El_Salvador': 'San Salvador (GMT-6)',
+  'America/Costa_Rica': 'San José (GMT-6)',
+  'America/Panama': 'Panamá (GMT-5)',
+  'America/Mexico_City': 'Ciudad de México (GMT-6)',
+  'America/Bogota': 'Bogotá (GMT-5)',
+  'America/Lima': 'Lima (GMT-5)',
+  'America/Santiago': 'Santiago (GMT-3/-4)',
+  'America/Argentina/Buenos_Aires': 'Buenos Aires (GMT-3)',
+};
+
 const allocationPresets = [
   { value: 'late_fee,interest,principal,fee', label: 'Mora → Interés → Capital → Comisión' },
   { value: 'interest,principal,fee,late_fee', label: 'Interés → Capital → Comisión → Mora' },
@@ -291,7 +305,7 @@ export function SettingsPage() {
                   label="Zona horaria"
                   value={businessForm.timezone}
                   onChange={(event) => setBusinessForm({ ...businessForm, timezone: event.target.value })}
-                  options={timezones.map((zone) => ({ value: zone, label: zone.replace('America/', '') }))}
+                  options={timezones.map((zone) => ({ value: zone, label: timezoneLabels[zone] ?? zone }))}
                 />
               </div>
               <Select
