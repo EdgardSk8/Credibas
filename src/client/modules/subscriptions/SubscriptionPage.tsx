@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { CreditCard, Receipt } from 'lucide-react';
+import { ArrowUpRight, CreditCard, Gauge, Receipt } from 'lucide-react';
 import { PageHeader } from '../../components/ui/PageHeader';
 import { Button } from '../../components/ui/Button';
 import { StatusBadge } from '../../components/ui/Badge';
@@ -120,6 +120,7 @@ export function SubscriptionPage() {
   return (
     <>
       <PageHeader
+        icon={<CreditCard size={16} />}
         title="Suscripción"
         description="Tu plan, límites de uso y facturación."
         actions={
@@ -192,7 +193,12 @@ export function SubscriptionPage() {
           <section className="card">
             <div className="card-header">
               <div>
-                <div className="card-title">Uso del plan</div>
+                <div className="card-title">
+                  <span className="icon-chip">
+                    <Gauge size={13} />
+                  </span>
+                  Uso del plan
+                </div>
                 <div className="card-subtitle">Los límites se validan en el backend antes de cada operación.</div>
               </div>
             </div>
@@ -207,7 +213,9 @@ export function SubscriptionPage() {
             <div className="card-header">
               <div>
                 <div className="card-title">
-                  <Receipt size={15} style={{ display: 'inline', marginRight: 6 }} />
+                  <span className="icon-chip">
+                    <Receipt size={13} />
+                  </span>
                   Facturas
                 </div>
               </div>
@@ -248,7 +256,9 @@ export function SubscriptionPage() {
             <div className="card-header">
               <div>
                 <div className="card-title">
-                  <CreditCard size={15} style={{ display: 'inline', marginRight: 6 }} />
+                  <span className="icon-chip">
+                    <ArrowUpRight size={13} />
+                  </span>
                   Cambiar plan
                 </div>
                 <div className="card-subtitle">Los cambios de límites se aplican al instante.</div>

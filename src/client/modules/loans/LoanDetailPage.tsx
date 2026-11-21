@@ -8,9 +8,13 @@ import {
   Ban,
   Banknote,
   CalendarClock,
+  CreditCard,
   Receipt,
   RefreshCcw,
+  SlidersHorizontal,
+  StickyNote,
   Wallet,
+  Zap,
 } from 'lucide-react';
 import { PageHeader } from '../../components/ui/PageHeader';
 import { Button } from '../../components/ui/Button';
@@ -143,6 +147,7 @@ export function LoanDetailPage() {
   return (
     <>
       <PageHeader
+        icon={<CreditCard size={16} />}
         eyebrow={loan.code}
         title={loan.clientName}
         description={`Desembolsado el ${dateShort(loan.disbursementDate)} · ${loan.installmentCount} cuotas ${frequencyLabel[loan.frequency]?.toLowerCase() ?? ''}`}
@@ -201,7 +206,12 @@ export function LoanDetailPage() {
           <section className="card">
             <div className="card-header">
               <div>
-                <div className="card-title">Calendario de cuotas</div>
+                <div className="card-title">
+                  <span className="icon-chip">
+                    <CalendarClock size={13} />
+                  </span>
+                  Calendario de cuotas
+                </div>
                 <div className="card-subtitle">
                   Progreso {loan.metrics.progressPercent}% · {installments.filter((item) => item.status === 'paid').length} cuota(s) pagada(s)
                 </div>
@@ -219,10 +229,14 @@ export function LoanDetailPage() {
           <section className="card">
             <div className="card-header">
               <div>
-                <div className="card-title">Pagos registrados</div>
+                <div className="card-title">
+                  <span className="icon-chip">
+                    <Receipt size={13} />
+                  </span>
+                  Pagos registrados
+                </div>
                 <div className="card-subtitle">{payments.length} pago(s) · trazabilidad completa</div>
               </div>
-              <Receipt size={18} color="var(--text-faint)" />
             </div>
 
             {payments.length === 0 ? (
@@ -278,7 +292,12 @@ export function LoanDetailPage() {
         <div className="dashboard-stack">
           <section className="card">
             <div className="card-header">
-              <div className="card-title">Condiciones</div>
+              <div className="card-title">
+                <span className="icon-chip">
+                  <SlidersHorizontal size={13} />
+                </span>
+                Condiciones
+              </div>
             </div>
             <div className="detail-meta">
               <div className="meta-row">
@@ -326,7 +345,12 @@ export function LoanDetailPage() {
           {isActive && (
             <section className="card">
               <div className="card-header">
-                <div className="card-title">Acciones</div>
+                <div className="card-title">
+                  <span className="icon-chip">
+                    <Zap size={13} />
+                  </span>
+                  Acciones
+                </div>
               </div>
               <div className="stack" style={{ gap: '0.5rem' }}>
                 {hasPermission(PERMISSIONS.loansAdjust) && (
@@ -363,7 +387,12 @@ export function LoanDetailPage() {
           {loan.notes && (
             <section className="card">
               <div className="card-header">
-                <div className="card-title">Notas</div>
+                <div className="card-title">
+                  <span className="icon-chip">
+                    <StickyNote size={13} />
+                  </span>
+                  Notas
+                </div>
               </div>
               <p className="text-muted" style={{ fontSize: 'var(--text-sm)', whiteSpace: 'pre-wrap' }}>
                 {loan.notes}

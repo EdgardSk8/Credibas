@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { BadgeDollarSign, Download, RefreshCcw, Search } from 'lucide-react';
+import { BadgeDollarSign, Download, Eye, RefreshCcw, Search } from 'lucide-react';
 import { PageHeader } from '../../components/ui/PageHeader';
 import { Button } from '../../components/ui/Button';
 import { Input, Textarea } from '../../components/ui/Field';
@@ -103,6 +103,7 @@ export function PaymentsPage() {
   return (
     <>
       <PageHeader
+        icon={<BadgeDollarSign size={16} />}
         title="Pagos"
         description="Cada cobro con su distribución, responsable y trazabilidad."
         actions={
@@ -195,6 +196,7 @@ export function PaymentsPage() {
                     <td className="cell-actions">
                       <div className="row" style={{ gap: '0.3rem', justifyContent: 'flex-end' }}>
                         <Button variant="ghost" size="sm" onClick={() => setDetailId(payment.id)}>
+                          <Eye size={13} />
                           Detalle
                         </Button>
                         {payment.status === 'confirmed' && hasPermission(PERMISSIONS.paymentsReverse) && (

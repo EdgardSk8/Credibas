@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { Download, FileBarChart } from 'lucide-react';
+import { ArrowDownUp, BadgeDollarSign, BarChart3, Download, FileBarChart, Layers, Percent } from 'lucide-react';
 import { PageHeader } from '../../components/ui/PageHeader';
 import { Button } from '../../components/ui/Button';
 import { LoadingBlock } from '../../components/ui/EmptyState';
@@ -85,6 +85,7 @@ export function ReportsPage() {
   return (
     <>
       <PageHeader
+        icon={<BarChart3 size={16} />}
         title="Reportes"
         description="Cartera, morosidad, pagos y flujo de caja con datos reales del negocio."
         actions={
@@ -137,7 +138,12 @@ export function ReportsPage() {
         <section className="card">
           <div className="card-header">
             <div>
-              <div className="card-title">Envejecimiento de cartera</div>
+              <div className="card-title">
+                <span className="icon-chip">
+                  <Layers size={13} />
+                </span>
+                Envejecimiento de cartera
+              </div>
               <div className="card-subtitle">Cuotas vencidas por rango de atraso</div>
             </div>
             <FileBarChart size={18} color="var(--text-faint)" />
@@ -167,7 +173,12 @@ export function ReportsPage() {
         <section className="card">
           <div className="card-header">
             <div>
-              <div className="card-title">Intereses</div>
+              <div className="card-title">
+                <span className="icon-chip">
+                  <Percent size={13} />
+                </span>
+                Intereses
+              </div>
               <div className="card-subtitle">Generados vs. cobrados</div>
             </div>
           </div>
@@ -214,7 +225,12 @@ export function ReportsPage() {
         <section className="card">
           <div className="card-header">
             <div>
-              <div className="card-title">Pagos por día</div>
+              <div className="card-title">
+                <span className="icon-chip">
+                  <BadgeDollarSign size={13} />
+                </span>
+                Pagos por día
+              </div>
               <div className="card-subtitle">
                 {dateShort(from)} — {dateShort(to)}
               </div>
@@ -251,7 +267,12 @@ export function ReportsPage() {
         <section className="card">
           <div className="card-header">
             <div>
-              <div className="card-title">Flujo de caja</div>
+              <div className="card-title">
+                <span className="icon-chip">
+                  <ArrowDownUp size={13} />
+                </span>
+                Flujo de caja
+              </div>
               <div className="card-subtitle">Ingresos vs. egresos de caja</div>
             </div>
           </div>

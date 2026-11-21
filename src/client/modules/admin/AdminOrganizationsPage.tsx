@@ -96,6 +96,7 @@ export function AdminOrganizationsPage() {
   return (
     <>
       <PageHeader
+        icon={<Building2 size={16} />}
         title="Organizaciones"
         description="Cada negocio con su suscripción, consumo y estado operativo."
       />

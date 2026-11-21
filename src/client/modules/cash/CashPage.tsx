@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { ArrowDownLeft, ArrowUpRight, Landmark, Lock, Plus, Unlock } from 'lucide-react';
+import { ArrowDownLeft, ArrowRightLeft, ArrowUpRight, History, Landmark, Lock, Plus, Unlock } from 'lucide-react';
 import { PageHeader } from '../../components/ui/PageHeader';
 import { Button } from '../../components/ui/Button';
 import { Input, Select, Textarea } from '../../components/ui/Field';
@@ -129,6 +129,7 @@ export function CashPage() {
   return (
     <>
       <PageHeader
+        icon={<Landmark size={16} />}
         title="Caja"
         description="Controla el efectivo del día con apertura, movimientos y arqueo al cierre."
         actions={
@@ -195,7 +196,12 @@ export function CashPage() {
           <section className="card">
             <div className="card-header">
               <div>
-                <div className="card-title">Movimientos de la caja</div>
+                <div className="card-title">
+                  <span className="icon-chip">
+                    <ArrowRightLeft size={13} />
+                  </span>
+                  Movimientos de la caja
+                </div>
                 <div className="card-subtitle">Cada cobro y desembolso queda vinculado a su operación.</div>
               </div>
               {hasPermission(PERMISSIONS.cashWrite) && (
@@ -249,7 +255,12 @@ export function CashPage() {
 
       <section className="card" style={{ marginTop: 'var(--space-4)' }}>
         <div className="card-header">
-          <div className="card-title">Historial de cajas</div>
+          <div className="card-title">
+            <span className="icon-chip">
+              <History size={13} />
+            </span>
+            Historial de cajas
+          </div>
         </div>
         {(historyQuery.data?.items.length ?? 0) === 0 ? (
           <p className="field-hint">Aún no hay cajas registradas.</p>

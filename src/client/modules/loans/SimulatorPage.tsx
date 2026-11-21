@@ -17,6 +17,7 @@ export function SimulatorPage() {
   return (
     <>
       <PageHeader
+        icon={<Calculator size={16} />}
         eyebrow="Herramienta"
         title="Simulador de crédito"
         description="Calcula cuotas, intereses y total a pagar antes de comprometer un desembolso. No guarda nada."
@@ -32,7 +33,12 @@ export function SimulatorPage() {
         <section className="card">
           <div className="card-header">
             <div>
-              <div className="card-title">Parámetros</div>
+              <div className="card-title">
+                <span className="icon-chip">
+                  <Calculator size={13} />
+                </span>
+                Parámetros
+              </div>
               <div className="card-subtitle">Ajusta y observa el resultado al instante.</div>
             </div>
           </div>

@@ -1,11 +1,14 @@
 import { Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import {
+  Activity,
   ArrowRight,
   ArrowUpRight,
   BadgeDollarSign,
+  BarChart3,
   CalendarClock,
   CircleDollarSign,
+  LayoutDashboard,
   Plus,
   TrendingDown,
   TrendingUp,
@@ -57,6 +60,7 @@ export function DashboardPage() {
   return (
     <>
       <PageHeader
+        icon={<LayoutDashboard size={16} />}
         title={`Hola, ${activeMembership?.orgName ?? ''}`}
         description="Este es el pulso de tu cartera hoy. Los indicadores se calculan con tus datos reales."
         actions={
@@ -128,7 +132,12 @@ export function DashboardPage() {
           <section className="card">
             <div className="card-header">
               <div>
-                <div className="card-title">Colocación vs. cobranza</div>
+                <div className="card-title">
+                  <span className="icon-chip">
+                    <BarChart3 size={13} />
+                  </span>
+                  Colocación vs. cobranza
+                </div>
                 <div className="card-subtitle">Últimos 6 meses · {currency}</div>
               </div>
               <div className="legend">
@@ -178,7 +187,12 @@ export function DashboardPage() {
           <section className="card">
             <div className="card-header">
               <div>
-                <div className="card-title">Próximos vencimientos</div>
+                <div className="card-title">
+                  <span className="icon-chip">
+                    <CalendarClock size={13} />
+                  </span>
+                  Próximos vencimientos
+                </div>
                 <div className="card-subtitle">Cuotas pendientes ordenadas por fecha</div>
               </div>
               <Link to="/app/cuotas" className="link" style={{ fontSize: 'var(--text-xs)' }}>
@@ -224,7 +238,12 @@ export function DashboardPage() {
         <div className="dashboard-stack">
           <section className="card">
             <div className="card-header">
-              <div className="card-title">Cobranza de hoy</div>
+              <div className="card-title">
+                <span className="icon-chip">
+                  <CircleDollarSign size={13} />
+                </span>
+                Cobranza de hoy
+              </div>
             </div>
             <div className="stack" style={{ gap: '0.5rem' }}>
               <div className="row-between">
@@ -250,7 +269,12 @@ export function DashboardPage() {
 
           <section className="card">
             <div className="card-header">
-              <div className="card-title">Resumen del negocio</div>
+              <div className="card-title">
+                <span className="icon-chip">
+                  <Wallet size={13} />
+                </span>
+                Resumen del negocio
+              </div>
             </div>
             <div className="detail-meta">
               <div className="meta-row">
@@ -276,7 +300,12 @@ export function DashboardPage() {
 
           <section className="card">
             <div className="card-header">
-              <div className="card-title">Actividad reciente</div>
+              <div className="card-title">
+                <span className="icon-chip">
+                  <Activity size={13} />
+                </span>
+                Actividad reciente
+              </div>
             </div>
             {data.recentActivity.length === 0 ? (
               <p className="field-hint">Aún no hay movimientos registrados.</p>

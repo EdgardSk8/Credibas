@@ -10,8 +10,11 @@ import {
   Pencil,
   Phone,
   Plus,
+  StickyNote,
   Trash2,
   Upload,
+  User,
+  Users,
   Wallet,
 } from 'lucide-react';
 import { PageHeader } from '../../components/ui/PageHeader';
@@ -117,6 +120,7 @@ export function ClientDetailPage() {
   return (
     <>
       <PageHeader
+        icon={<User size={16} />}
         eyebrow={client.code}
         title={client.fullName}
         description={client.identification ? `Identificación: ${client.identification}` : 'Sin identificación registrada'}
@@ -169,7 +173,12 @@ export function ClientDetailPage() {
           <section className="card">
             <div className="card-header">
               <div>
-                <div className="card-title">Préstamos del cliente</div>
+                <div className="card-title">
+                  <span className="icon-chip">
+                    <Wallet size={13} />
+                  </span>
+                  Préstamos del cliente
+                </div>
                 <div className="card-subtitle">{loans.length} préstamo(s) registrado(s)</div>
               </div>
             </div>
@@ -228,7 +237,12 @@ export function ClientDetailPage() {
           <section className="card">
             <div className="card-header">
               <div>
-                <div className="card-title">Documentos</div>
+                <div className="card-title">
+                  <span className="icon-chip">
+                    <FileText size={13} />
+                  </span>
+                  Documentos
+                </div>
                 <div className="card-subtitle">Cédula, comprobantes y soportes (máx. 10 MB)</div>
               </div>
               {hasPermission(PERMISSIONS.clientsDocuments) && (
@@ -291,7 +305,12 @@ export function ClientDetailPage() {
         <div className="dashboard-stack">
           <section className="card">
             <div className="card-header">
-              <div className="card-title">Contacto</div>
+              <div className="card-title">
+                <span className="icon-chip">
+                  <User size={13} />
+                </span>
+                Contacto
+              </div>
               <StatusBadge map={clientStatus} value={client.status} />
             </div>
             <div className="detail-meta">
@@ -342,7 +361,12 @@ export function ClientDetailPage() {
 
           <section className="card">
             <div className="card-header">
-              <div className="card-title">Referencias</div>
+              <div className="card-title">
+                <span className="icon-chip">
+                  <Users size={13} />
+                </span>
+                Referencias
+              </div>
             </div>
             {client.references.length === 0 ? (
               <p className="field-hint">Sin referencias registradas.</p>
@@ -363,7 +387,12 @@ export function ClientDetailPage() {
 
           <section className="card">
             <div className="card-header">
-              <div className="card-title">Notas internas</div>
+              <div className="card-title">
+                <span className="icon-chip">
+                  <StickyNote size={13} />
+                </span>
+                Notas internas
+              </div>
             </div>
             <p className="text-muted" style={{ fontSize: 'var(--text-sm)', whiteSpace: 'pre-wrap' }}>
               {client.notes || 'Sin notas.'}

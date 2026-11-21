@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
-import { AlertTriangle, ArrowLeft, Calculator, Check } from 'lucide-react';
+import { AlertTriangle, ArrowLeft, Calculator, Check, PlusCircle } from 'lucide-react';
 import { PageHeader } from '../../components/ui/PageHeader';
 import { Button } from '../../components/ui/Button';
 import { Select, Textarea } from '../../components/ui/Field';
@@ -75,6 +75,7 @@ export function NewLoanPage() {
   return (
     <>
       <PageHeader
+        icon={<PlusCircle size={16} />}
         eyebrow="Nuevo crédito"
         title="Crear préstamo"
         description="El calendario se calcula con el motor financiero de Credibas antes de guardar. Nada se desembolsa sin calendario verificable."
@@ -145,7 +146,12 @@ export function NewLoanPage() {
           <section className="card">
             <div className="card-header">
               <div>
-                <div className="card-title">Vista previa del calendario</div>
+                <div className="card-title">
+                  <span className="icon-chip">
+                    <AlertTriangle size={13} />
+                  </span>
+                  Vista previa del calendario
+                </div>
                 <div className="card-subtitle">
                   {preview.schedule
                     ? `${preview.schedule.installments.length} cuotas · primera el ${dateShort(preview.schedule.installments[0]?.dueDate ?? '')}`

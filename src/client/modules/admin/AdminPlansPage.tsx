@@ -131,6 +131,7 @@ export function AdminPlansPage() {
   return (
     <>
       <PageHeader
+        icon={<CreditCard size={16} />}
         title="Planes"
         description="Los precios y límites viven en la base de datos: aquí se editan sin tocar código."
         actions={

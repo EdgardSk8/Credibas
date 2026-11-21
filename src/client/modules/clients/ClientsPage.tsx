@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { Download, Plus, Search, Users } from 'lucide-react';
+import { Download, Eye, Plus, Search, Users } from 'lucide-react';
 import { PageHeader } from '../../components/ui/PageHeader';
 import { Button } from '../../components/ui/Button';
 import { Input } from '../../components/ui/Field';
@@ -54,6 +54,7 @@ export function ClientsPage() {
   return (
     <>
       <PageHeader
+        icon={<Users size={16} />}
         title="Clientes"
         description="Cada cliente guarda su expediente, historial crediticio y documentos."
         actions={
@@ -177,6 +178,7 @@ export function ClientsPage() {
                     </td>
                     <td className="cell-actions">
                       <Link to={`/app/clientes/${client.id}`} className="btn btn-sm">
+                        <Eye size={13} />
                         Ver ficha
                       </Link>
                     </td>

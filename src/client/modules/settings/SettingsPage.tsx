@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { History, Plus, Settings2, ShieldCheck, Trash2, UserPlus, Users } from 'lucide-react';
+import { History, Plus, Settings2, ShieldCheck, SlidersHorizontal, Trash2, UserPlus, Users } from 'lucide-react';
 import { PageHeader } from '../../components/ui/PageHeader';
 import { Button } from '../../components/ui/Button';
 import { Checkbox, Input, Select } from '../../components/ui/Field';
@@ -242,6 +242,7 @@ export function SettingsPage() {
   return (
     <>
       <PageHeader
+        icon={<Settings2 size={16} />}
         title="Configuración"
         description="Datos del negocio, políticas de cobro y equipo de trabajo."
         actions={
@@ -276,7 +277,9 @@ export function SettingsPage() {
             <div className="card-header">
               <div>
                 <div className="card-title">
-                  <Settings2 size={15} style={{ display: 'inline', marginRight: 6 }} />
+                  <span className="icon-chip">
+                    <Settings2 size={13} />
+                  </span>
                   Datos del negocio
                 </div>
                 <div className="card-subtitle">Identificador: {org.slug}</div>
@@ -324,7 +327,12 @@ export function SettingsPage() {
           <section className="card">
             <div className="card-header">
               <div>
-                <div className="card-title">Políticas de cobro</div>
+                <div className="card-title">
+                  <span className="icon-chip">
+                    <SlidersHorizontal size={13} />
+                  </span>
+                  Políticas de cobro
+                </div>
                 <div className="card-subtitle">Valores por defecto para nuevos préstamos.</div>
               </div>
             </div>
@@ -400,7 +408,9 @@ export function SettingsPage() {
           <div className="card-header">
             <div>
               <div className="card-title">
-                <Users size={15} style={{ display: 'inline', marginRight: 6 }} />
+                <span className="icon-chip">
+                  <Users size={13} />
+                </span>
                 Equipo
               </div>
               <div className="card-subtitle">
@@ -504,7 +514,9 @@ export function SettingsPage() {
           <div className="card-header">
             <div>
               <div className="card-title">
-                <History size={15} style={{ display: 'inline', marginRight: 6 }} />
+                <span className="icon-chip">
+                  <History size={13} />
+                </span>
                 Registro de auditoría
               </div>
               <div className="card-subtitle">Quién hizo qué y cuándo.</div>

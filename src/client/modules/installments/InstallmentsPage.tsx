@@ -56,6 +56,7 @@ export function InstallmentsPage() {
   return (
     <>
       <PageHeader
+        icon={<CalendarClock size={16} />}
         title="Cuotas"
         description="Todos los vencimientos de tu cartera, con saldo pendiente y estado real."
         actions={

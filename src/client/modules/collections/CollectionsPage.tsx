@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { CalendarClock, ClipboardList, Phone, Plus, UserCheck } from 'lucide-react';
+import { CalendarClock, ClipboardList, ListChecks, Phone, Plus, UserCheck } from 'lucide-react';
 import { PageHeader } from '../../components/ui/PageHeader';
 import { Button } from '../../components/ui/Button';
 import { Input, Select, Textarea } from '../../components/ui/Field';
@@ -162,6 +162,7 @@ export function CollectionsPage() {
   return (
     <>
       <PageHeader
+        icon={<ListChecks size={16} />}
         title="Gestión de cobros"
         description="Agenda del día, asignaciones por cobrador y seguimiento de promesas."
         actions={
@@ -183,9 +184,9 @@ export function CollectionsPage() {
       <div className="toolbar">
         <div className="tabs" role="tablist">
           {[
-            { key: 'agenda', label: 'Agenda' },
-            { key: 'assignments', label: 'Asignaciones' },
-            { key: 'activities', label: 'Gestiones' },
+            { key: 'agenda', label: 'Agenda', icon: CalendarClock },
+            { key: 'assignments', label: 'Asignaciones', icon: UserCheck },
+            { key: 'activities', label: 'Gestiones', icon: ClipboardList },
           ].map((item) => (
             <button
               key={item.key}
@@ -195,6 +196,7 @@ export function CollectionsPage() {
               aria-selected={tab === item.key}
               onClick={() => setTab(item.key as Tab)}
             >
+              <item.icon size={13} />
               {item.label}
             </button>
           ))}

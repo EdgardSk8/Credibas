@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import { Building2, CreditCard, TrendingUp, Users, Wallet, AlertTriangle } from 'lucide-react';
+import { Building2, CreditCard, LayoutDashboard, TrendingUp, Users, Wallet, AlertTriangle } from 'lucide-react';
 import { PageHeader } from '../../components/ui/PageHeader';
 import { LoadingBlock } from '../../components/ui/EmptyState';
 import { api, errorMessage } from '../../lib/api';
@@ -26,6 +26,7 @@ export function AdminOverviewPage() {
   return (
     <>
       <PageHeader
+        icon={<LayoutDashboard size={16} />}
         title="Resumen de la plataforma"
         description="Organizaciones, suscripciones y cartera global administrada en Credibas."
       />

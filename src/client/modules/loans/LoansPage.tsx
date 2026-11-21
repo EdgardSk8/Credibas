@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
-import { Download, Plus, Search, Wallet } from 'lucide-react';
+import { Download, Eye, Plus, Search, Wallet } from 'lucide-react';
 import { PageHeader } from '../../components/ui/PageHeader';
 import { Button } from '../../components/ui/Button';
 import { Input } from '../../components/ui/Field';
@@ -44,6 +44,7 @@ export function LoansPage() {
   return (
     <>
       <PageHeader
+        icon={<Wallet size={16} />}
         title="Préstamos"
         description="Cartera colocada, saldos pendientes y estado de cada crédito."
         actions={
@@ -169,6 +170,7 @@ export function LoansPage() {
                     </td>
                     <td className="cell-actions">
                       <Link to={`/app/prestamos/${loan.id}`} className="btn btn-sm">
+                        <Eye size={13} />
                         Ver
                       </Link>
                     </td>
