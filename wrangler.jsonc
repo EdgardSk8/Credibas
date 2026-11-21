@@ -1,0 +1,55 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "credibas",
+  "main": "src/worker/index.ts",
+  "compatibility_date": "2026-11-01",
+  "assets": {
+    "not_found_handling": "single-page-application",
+    "run_worker_first": ["/api/*"]
+  },
+  "observability": {
+    "enabled": true,
+    "head_sampling_rate": 1
+  },
+  "vars": {
+    "APP_ENV": "development",
+    "APP_NAME": "Credibas",
+    "APP_URL": "http://localhost:5173",
+    "EMAIL_PROVIDER": "console",
+    "PAYMENTS_PROVIDER": "manual"
+  },
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "credibas-db",
+      "database_id": "REPLACE_WITH_D1_DATABASE_ID",
+      "migrations_dir": "migrations"
+    }
+  ],
+  "r2_buckets": [
+    {
+      "binding": "FILES",
+      "bucket_name": "credibas-files"
+    }
+  ],
+  "queues": {
+    "producers": [
+      {
+        "binding": "JOBS",
+        "queue": "credibas-jobs"
+      }
+    ],
+    "consumers": [
+      {
+        "queue": "credibas-jobs",
+        "max_batch_size": 10,
+        "max_batch_timeout": 10,
+        "max_retries": 5,
+        "dead_letter_queue": "credibas-jobs-dlq"
+      }
+    ]
+  },
+  "triggers": {
+    "crons": ["*/15 * * * *", "0 13 * * *"]
+  }
+}
