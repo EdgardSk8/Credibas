@@ -4,7 +4,7 @@ interface PageHeaderProps {
   title: string;
   description?: string;
   actions?: ReactNode;
-  eyebrow?: string;
+  eyebrow?: ReactNode;
 }
 
 export function PageHeader({ title, description, actions, eyebrow }: PageHeaderProps) {

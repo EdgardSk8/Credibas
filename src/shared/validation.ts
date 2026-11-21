@@ -1,28 +1,36 @@
-import { z } from 'zod';
+﻿import { z } from 'zod';
 
 export const dateOnlySchema = z.iso.date();
 export const currencySchema = z.enum(['NIO', 'USD']);
 
+/**
+ * Los identificadores de Credibas son UUID con prefijo de dominio
+ * (usr_, org_, cli_, lon_...), por eso no se valida con idSchema.
+ */
+export const idSchema = z
+  .string()
+  .regex(/^[a-z]{3}_[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i, 'Identificador invÃ¡lido');
+
 export const passwordSchema = z
   .string()
-  .min(10, 'La contraseña debe tener al menos 10 caracteres')
-  .max(128, 'La contraseña es demasiado larga')
-  .regex(/[A-Za-zÁÉÍÓÚÜÑáéíóúüñ]/, 'La contraseña debe incluir al menos una letra')
-  .regex(/\d/, 'La contraseña debe incluir al menos un número');
+  .min(10, 'La contraseÃ±a debe tener al menos 10 caracteres')
+  .max(128, 'La contraseÃ±a es demasiado larga')
+  .regex(/[A-Za-zÃÃ‰ÃÃ“ÃšÃœÃ‘Ã¡Ã©Ã­Ã³ÃºÃ¼Ã±]/, 'La contraseÃ±a debe incluir al menos una letra')
+  .regex(/\d/, 'La contraseÃ±a debe incluir al menos un nÃºmero');
 
-export const emailSchema = z.email('Ingresa un correo válido').max(254).transform((value) => value.trim().toLowerCase());
+export const emailSchema = z.email('Ingresa un correo vÃ¡lido').max(254).transform((value) => value.trim().toLowerCase());
 
 export const registerSchema = z.object({
   fullName: z.string().trim().min(2, 'Ingresa tu nombre').max(120),
   email: emailSchema,
   password: passwordSchema,
   turnstileToken: z.string().optional(),
-  acceptTerms: z.literal(true, { message: 'Debes aceptar los términos y la política de privacidad' }),
+  acceptTerms: z.literal(true, { message: 'Debes aceptar los tÃ©rminos y la polÃ­tica de privacidad' }),
 });
 
 export const loginSchema = z.object({
   email: emailSchema,
-  password: z.string().min(1, 'Ingresa tu contraseña').max(200),
+  password: z.string().min(1, 'Ingresa tu contraseÃ±a').max(200),
   turnstileToken: z.string().optional(),
 });
 
@@ -61,8 +69,9 @@ const optionalText = (max: number) =>
     .string()
     .trim()
     .max(max)
+    .nullable()
     .optional()
-    .transform((value) => (value === undefined || value === '' ? null : value));
+    .transform((value) => (value === undefined || value === null || value === '' ? null : value));
 
 export const clientReferenceSchema = z.object({
   name: z.string().trim().min(1).max(120),
@@ -79,9 +88,10 @@ export const clientInputSchema = z.object({
     .string()
     .trim()
     .max(254)
+    .nullable()
     .optional()
     .transform((value) => (value ? value.toLowerCase() : null))
-    .refine((value) => value === null || /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value), 'Correo inválido'),
+    .refine((value) => value === null || /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value), 'Correo invÃ¡lido'),
   address: optionalText(240),
   references: z.array(clientReferenceSchema).max(10).default([]),
   notes: optionalText(2000),
@@ -90,7 +100,7 @@ export const clientInputSchema = z.object({
 
 export const loanInputSchema = z
   .object({
-    clientId: z.uuid(),
+    clientId: idSchema,
     currency: currencySchema,
     principalCents: z.number().int().positive('El capital debe ser mayor a cero'),
     interestRateBps: z.number().int().min(0).max(10_000),
@@ -117,7 +127,7 @@ export const loanInputSchema = z
       ctx.addIssue({
         code: 'custom',
         path: ['customDays'],
-        message: 'Indica cada cuántos días se cobra',
+        message: 'Indica cada cuÃ¡ntos dÃ­as se cobra',
       });
     }
   });
@@ -130,7 +140,7 @@ export const loanAdjustmentSchema = z.object({
 });
 
 export const paymentInputSchema = z.object({
-  loanId: z.uuid(),
+  loanId: idSchema,
   amountCents: z.number().int().positive('El monto debe ser mayor a cero'),
   method: z.enum(['cash', 'transfer', 'card', 'other']),
   paidAt: dateOnlySchema,
@@ -140,21 +150,21 @@ export const paymentInputSchema = z.object({
 });
 
 export const reversePaymentSchema = z.object({
-  reason: z.string().trim().min(10, 'Describe el motivo de la reversión').max(500),
+  reason: z.string().trim().min(10, 'Describe el motivo de la reversiÃ³n').max(500),
 });
 
 export const collectionAssignmentSchema = z.object({
-  clientId: z.uuid(),
-  loanId: z.uuid().nullable().optional(),
-  collectorMemberId: z.uuid(),
+  clientId: idSchema,
+  loanId: idSchema.nullable().optional(),
+  collectorMemberId: idSchema,
   nextContactAt: dateOnlySchema.nullable().optional(),
   notes: optionalText(1000),
 });
 
 export const collectionActivitySchema = z.object({
-  clientId: z.uuid(),
-  loanId: z.uuid().nullable().optional(),
-  assignmentId: z.uuid().nullable().optional(),
+  clientId: idSchema,
+  loanId: idSchema.nullable().optional(),
+  assignmentId: idSchema.nullable().optional(),
   type: z.enum(['call', 'visit', 'message', 'promise', 'note']),
   outcome: optionalText(120),
   notes: optionalText(2000),
@@ -199,7 +209,7 @@ export const changePlanSchema = z.object({
 });
 
 export const confirmBillingPaymentSchema = z.object({
-  invoiceId: z.uuid(),
+  invoiceId: idSchema,
   provider: z.enum(['manual', 'transfer', 'card', 'other']),
   reference: optionalText(120),
   amountCents: z.number().int().positive(),
@@ -242,7 +252,7 @@ export const publicContactSchema = z.object({
   name: z.string().trim().min(2).max(120),
   email: emailSchema,
   company: optionalText(120),
-  message: z.string().trim().min(10, 'Cuéntanos un poco más').max(2000),
+  message: z.string().trim().min(10, 'CuÃ©ntanos un poco mÃ¡s').max(2000),
   turnstileToken: z.string().optional(),
 });
 

@@ -1,4 +1,4 @@
-import type { ReactNode } from 'react';
+import type { CSSProperties, ReactNode } from 'react';
 
 export type BadgeTone = 'neutral' | 'accent' | 'success' | 'warning' | 'danger';
 
@@ -7,6 +7,7 @@ interface BadgeProps {
   tone?: BadgeTone;
   dot?: boolean;
   className?: string;
+  style?: CSSProperties;
 }
 
 const toneClass: Record<BadgeTone, string> = {
@@ -17,9 +18,9 @@ const toneClass: Record<BadgeTone, string> = {
   danger: 'badge-danger',
 };
 
-export function Badge({ children, tone = 'neutral', dot = false, className = '' }: BadgeProps) {
+export function Badge({ children, tone = 'neutral', dot = false, className = '', style }: BadgeProps) {
   return (
-    <span className={`badge ${toneClass[tone]} ${className}`.trim()}>
+    <span className={`badge ${toneClass[tone]} ${className}`.trim()} style={style}>
       {dot && <span className="dot" />}
       {children}
     </span>

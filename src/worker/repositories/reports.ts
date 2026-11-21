@@ -124,14 +124,14 @@ export async function getMonthlySeries(db: Db, orgId: string, months: number) {
     `SELECT substr(disbursement_date, 1, 7) AS month, COALESCE(SUM(principal_cents), 0) AS total
        FROM loans
       WHERE org_id = ? AND deleted_at IS NULL AND status <> 'cancelled'
-      GROUP BY month ORDER BY month DESC LIMIT ?`,
+      GROUP BY substr(disbursement_date, 1, 7) ORDER BY substr(disbursement_date, 1, 7) DESC LIMIT ?`,
     [orgId, months],
   );
   const collected = await db.all<{ month: string; total: number }>(
     `SELECT substr(paid_at, 1, 7) AS month, COALESCE(SUM(amount_cents), 0) AS total
        FROM payments
       WHERE org_id = ? AND status = 'confirmed'
-      GROUP BY month ORDER BY month DESC LIMIT ?`,
+      GROUP BY substr(paid_at, 1, 7) ORDER BY substr(paid_at, 1, 7) DESC LIMIT ?`,
     [orgId, months],
   );
 
@@ -295,7 +295,7 @@ export async function getPaymentsByPeriod(db: Db, orgId: string, from: string, t
     `SELECT substr(paid_at, 1, 10) AS period, COUNT(*) AS count, COALESCE(SUM(amount_cents), 0) AS totalCents
        FROM payments
       WHERE org_id = ? AND status = 'confirmed' AND paid_at BETWEEN ? AND ?
-      GROUP BY period ORDER BY period ASC`,
+      GROUP BY substr(paid_at, 1, 10) ORDER BY substr(paid_at, 1, 10) ASC`,
     [orgId, from, to],
   );
 }
@@ -307,7 +307,8 @@ export async function getCashflowReport(db: Db, orgId: string, from: string, to:
             COALESCE(SUM(CASE WHEN direction = 'out' THEN amount_cents ELSE 0 END), 0) AS expenseCents
        FROM cash_movements
       WHERE org_id = ? AND date(created_at / 1000, 'unixepoch') BETWEEN ? AND ?
-      GROUP BY period ORDER BY period ASC`,
+      GROUP BY substr(date(created_at / 1000, 'unixepoch'), 1, 10)
+      ORDER BY substr(date(created_at / 1000, 'unixepoch'), 1, 10) ASC`,
     [orgId, from, to],
   );
 }

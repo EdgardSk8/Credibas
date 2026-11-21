@@ -1,0 +1,19 @@
+{
+  "name": "Credibas — Gestión de créditos y cartera",
+  "short_name": "Credibas",
+  "description": "Administra préstamos, clientes, cuotas y cobros desde una plataforma diseñada para tu negocio financiero.",
+  "start_url": "/app",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#101817",
+  "theme_color": "#101817",
+  "lang": "es-NI",
+  "icons": [
+    {
+      "src": "/brand/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}
