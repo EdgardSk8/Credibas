@@ -1,19 +1,52 @@
 {
+  "id": "/",
   "name": "Credibas — Gestión de créditos y cartera",
   "short_name": "Credibas",
   "description": "Administra préstamos, clientes, cuotas y cobros desde una plataforma diseñada para tu negocio financiero.",
   "start_url": "/app",
   "scope": "/",
   "display": "standalone",
+  "orientation": "portrait-primary",
   "background_color": "#101817",
   "theme_color": "#101817",
   "lang": "es-NI",
+  "dir": "ltr",
+  "categories": ["finance", "business", "productivity"],
   "icons": [
     {
-      "src": "/brand/favicon.svg",
-      "sizes": "any",
-      "type": "image/svg+xml",
+      "src": "/android-chrome-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
       "purpose": "any"
+    },
+    {
+      "src": "/android-chrome-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/android-chrome-maskable-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Panel",
+      "url": "/app",
+      "icons": [{ "src": "/favicon-32x32.png", "sizes": "32x32", "type": "image/png" }]
+    },
+    {
+      "name": "Clientes",
+      "url": "/app/clientes",
+      "icons": [{ "src": "/favicon-32x32.png", "sizes": "32x32", "type": "image/png" }]
+    },
+    {
+      "name": "Registrar pago",
+      "url": "/app/pagos?action=new",
+      "icons": [{ "src": "/favicon-32x32.png", "sizes": "32x32", "type": "image/png" }]
     }
   ]
 }

@@ -22,7 +22,7 @@
 
 .site-header.is-scrolled {
   border-bottom-color: var(--border);
-  background: rgba(16, 24, 23, 0.82);
+  background: var(--header-bg);
   backdrop-filter: blur(14px) saturate(140%);
 }
 
@@ -78,7 +78,7 @@
 .mobile-nav {
   display: none;
   border-bottom: 1px solid var(--border);
-  background: rgba(16, 24, 23, 0.97);
+  background: var(--mobile-nav-bg);
   padding: var(--space-4) 0 var(--space-6);
 }
 
@@ -108,7 +108,7 @@
   border-top: 1px solid var(--border);
   margin-top: var(--space-16);
   padding-block: var(--space-12) var(--space-8);
-  background: rgba(240, 244, 242, 0.012);
+  background: rgba(var(--ink-rgb), 0.012);
 }
 
 .footer-grid {
@@ -165,8 +165,8 @@
 }
 
 .footer-status .dot {
-  color: var(--accent);
-  box-shadow: 0 0 0 3px rgba(53, 214, 160, 0.16);
+  color: var(--accent-ink);
+  box-shadow: 0 0 0 3px rgba(var(--accent-rgb), 0.16);
 }
 
 /* ------------------------------------------------------------------ Shell privado */
@@ -185,7 +185,7 @@
   gap: var(--space-4);
   padding: var(--space-4) var(--space-3);
   border-right: 1px solid var(--border);
-  background: rgba(22, 33, 31, 0.5);
+  background: var(--sidebar-bg);
   backdrop-filter: blur(8px);
   z-index: 30;
 }
@@ -210,7 +210,7 @@
   padding: 0.55rem 0.65rem;
   border: 1px solid var(--border);
   border-radius: var(--radius-sm);
-  background: rgba(240, 244, 242, 0.03);
+  background: rgba(var(--ink-rgb), 0.03);
   color: var(--text-muted);
   font-size: var(--text-sm);
   text-align: left;
@@ -221,7 +221,7 @@
 
 .org-switcher-button:hover {
   border-color: var(--border-strong);
-  background: rgba(240, 244, 242, 0.05);
+  background: rgba(var(--ink-rgb), 0.05);
 }
 
 .org-switcher-meta {
@@ -282,13 +282,13 @@
 }
 
 .sidebar-link:hover {
-  background: rgba(240, 244, 242, 0.045);
+  background: rgba(var(--ink-rgb), 0.045);
   color: var(--text);
 }
 
 .sidebar-link.is-active {
   background: var(--accent-soft);
-  color: var(--accent);
+  color: var(--accent-ink);
   font-weight: 650;
 }
 
@@ -349,7 +349,7 @@
   height: var(--topbar-height);
   padding: 0 var(--space-5);
   border-bottom: 1px solid var(--border);
-  background: rgba(16, 24, 23, 0.78);
+  background: var(--topbar-bg);
   backdrop-filter: blur(12px);
 }
 
@@ -393,7 +393,7 @@
 }
 
 .icon-button:hover {
-  background: rgba(240, 244, 242, 0.05);
+  background: rgba(var(--ink-rgb), 0.05);
   color: var(--text);
   border-color: var(--border);
 }
@@ -407,7 +407,7 @@
   padding: 0 4px;
   border-radius: var(--radius-full);
   background: var(--accent);
-  color: #06251b;
+  color: var(--accent-contrast);
   font-size: 9px;
   font-weight: 800;
   display: grid;
@@ -450,7 +450,7 @@
   border-radius: 9px;
   border: 1px solid var(--border-accent);
   background: var(--accent-soft);
-  color: var(--accent);
+  color: var(--accent-ink);
 }
 
 .page-header h1 {
@@ -500,7 +500,7 @@
     position: fixed;
     inset: 0;
     z-index: 29;
-    background: rgba(8, 13, 12, 0.6);
+    background: rgba(var(--overlay-rgb), 0.6);
     backdrop-filter: blur(2px);
   }
 

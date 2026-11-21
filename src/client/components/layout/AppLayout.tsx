@@ -19,9 +19,12 @@ import {
   Menu,
   Shield,
   Check,
+  Moon,
+  Sparkles,
 } from 'lucide-react';
 import { Logo, LogoMark } from '../brand/Logo';
 import { useAuth } from '../../hooks/useAuth';
+import { useTheme } from '../../hooks/useTheme';
 import { api } from '../../lib/api';
 import { initials, relativeTime } from '../../lib/format';
 import { PERMISSIONS } from '@shared/rbac';
@@ -59,6 +62,7 @@ const pageTitles: Array<{ match: RegExp; title: string; subtitle: string }> = [
 
 export function AppLayout() {
   const { me, activeMembership, hasPermission, logout, switchOrganization } = useAuth();
+  const { isGold, toggle: toggleTheme } = useTheme();
   const location = useLocation();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
@@ -329,6 +333,10 @@ export function AppLayout() {
                       Panel de plataforma
                     </Link>
                   )}
+                  <button type="button" className="menu-item" onClick={toggleTheme}>
+                    {isGold ? <Moon size={14} /> : <Sparkles size={14} />}
+                    {isGold ? 'Volver al modo oscuro' : 'Probar modo oro'}
+                  </button>
                   <div className="menu-separator" />
                   <button type="button" className="menu-item menu-item-danger" onClick={handleLogout}>
                     <LogOut size={14} />

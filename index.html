@@ -1,25 +1,106 @@
 <!doctype html>
-<html lang="es">
+<html lang="es-NI">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="theme-color" content="#101817" />
-    <meta name="color-scheme" content="dark" />
+    <meta name="color-scheme" content="dark light" />
+    <meta name="theme-color" content="#101817" id="theme-color-meta" />
+    <meta name="format-detection" content="telephone=no" />
+
+    <!--seo-->
     <title>Credibas — Controla tus créditos. Domina tus finanzas.</title>
     <meta
       name="description"
       content="Credibas es la plataforma para administrar préstamos, clientes, cuotas y cobros de tu negocio financiero. Control total de tu cartera desde un solo lugar."
     />
+    <link rel="canonical" href="https://credibas.app/" />
+    <meta name="robots" content="index, follow, max-image-preview:large" />
+    <meta name="author" content="Credibas" />
+    <meta name="application-name" content="Credibas" />
+
     <meta property="og:type" content="website" />
-    <meta property="og:title" content="Credibas — Gestión profesional de créditos" />
+    <meta property="og:site_name" content="Credibas" />
+    <meta property="og:locale" content="es_NI" />
+    <meta property="og:title" content="Credibas — Controla tus créditos. Domina tus finanzas." />
     <meta
       property="og:description"
       content="Administra préstamos, clientes, cuotas y cobros desde una plataforma diseñada para mantener tu negocio financiero organizado."
     />
-    <meta property="og:locale" content="es_NI" />
+    <meta property="og:url" content="https://credibas.app/" />
+    <meta property="og:image" content="https://credibas.app/og-image.png" />
+    <meta property="og:image:secure_url" content="https://credibas.app/og-image.png" />
+    <meta property="og:image:type" content="image/png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="Credibas — Gestión de créditos y cartera" />
+
     <meta name="twitter:card" content="summary_large_image" />
-    <link rel="icon" type="image/svg+xml" href="/brand/favicon.svg" />
+    <meta name="twitter:title" content="Credibas — Controla tus créditos. Domina tus finanzas." />
+    <meta
+      name="twitter:description"
+      content="Administra préstamos, clientes, cuotas y cobros desde una plataforma diseñada para mantener tu negocio financiero organizado."
+    />
+    <meta name="twitter:image" content="https://credibas.app/og-image.png" />
+    <meta name="twitter:image:alt" content="Credibas — Gestión de créditos y cartera" />
+
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "Organization",
+            "@id": "https://credibas.app/#organization",
+            "name": "Credibas",
+            "url": "https://credibas.app/",
+            "logo": {
+              "@type": "ImageObject",
+              "url": "https://credibas.app/android-chrome-512x512.png",
+              "width": 512,
+              "height": 512
+            }
+          },
+          {
+            "@type": "WebSite",
+            "@id": "https://credibas.app/#website",
+            "url": "https://credibas.app/",
+            "name": "Credibas",
+            "inLanguage": "es-NI",
+            "publisher": { "@id": "https://credibas.app/#organization" }
+          },
+          {
+            "@type": "SoftwareApplication",
+            "name": "Credibas",
+            "applicationCategory": "BusinessApplication",
+            "operatingSystem": "Web",
+            "url": "https://credibas.app/",
+            "description": "Plataforma para administrar préstamos, clientes, cuotas, pagos y cobros.",
+            "offers": {
+              "@type": "AggregateOffer",
+              "priceCurrency": "USD",
+              "lowPrice": "9.90",
+              "highPrice": "49.90",
+              "offerCount": 3
+            }
+          }
+        ]
+      }
+    </script>
+    <!--/seo-->
+
+    <link rel="icon" href="/favicon.ico" sizes="any" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
     <link rel="manifest" href="/site.webmanifest" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="Credibas" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="msapplication-TileColor" content="#17211F" />
+    <meta name="msapplication-config" content="/browserconfig.xml" />
+
+    <script src="/theme-init.js"></script>
   </head>
   <body>
     <div id="root"></div>

@@ -4,25 +4,49 @@
   --accent: #35d6a0;
   --paper: #f0f4f2;
 
+  /* Canales RGB para superficies translúcidas (permiten cambiar de tema) */
+  --ink-rgb: 240 244 242;
+  --accent-rgb: 53 214 160;
+  --surface-rgb: 22 33 31;
+  --bg-rgb: 16 24 23;
+  --overlay-rgb: 8 13 12;
+
+  /* Contraste sobre el color de acento y estados de texto */
+  --accent-contrast: #06251b;
+  --accent-hover: #43e5b0;
+  --accent-ink: #35d6a0;
+  --danger-text: #ffd9d5;
+  --warning-text: #f6e4b8;
+
   /* Superficies derivadas del fondo (solo opacidades) */
   --surface-1: #16211f;
   --surface-2: #1a2624;
   --surface-3: #1f2d2a;
-  --surface-glass: rgba(22, 33, 31, 0.72);
+  --surface-glass: rgba(var(--surface-rgb), 0.72);
   --surface-invert: #f0f4f2;
+
+  /* Capas de interfaz */
+  --sidebar-bg: rgba(var(--surface-rgb), 0.5);
+  --topbar-bg: rgba(var(--bg-rgb), 0.78);
+  --header-bg: rgba(var(--bg-rgb), 0.82);
+  --mobile-nav-bg: rgba(var(--bg-rgb), 0.97);
+  --overlay-bg: rgba(var(--overlay-rgb), 0.72);
+  --surface-hover: rgba(var(--ink-rgb), 0.05);
+  --surface-tint: rgba(var(--ink-rgb), 0.035);
+  --surface-subtle: rgba(var(--ink-rgb), 0.02);
 
   /* Texto */
   --text: #f0f4f2;
-  --text-muted: rgba(240, 244, 242, 0.68);
-  --text-faint: rgba(240, 244, 242, 0.44);
+  --text-muted: rgba(var(--ink-rgb), 0.68);
+  --text-faint: rgba(var(--ink-rgb), 0.44);
   --text-invert: #101817;
 
   /* Bordes y líneas */
-  --border: rgba(240, 244, 242, 0.08);
-  --border-strong: rgba(240, 244, 242, 0.16);
-  --border-accent: rgba(53, 214, 160, 0.36);
-  --accent-soft: rgba(53, 214, 160, 0.1);
-  --accent-softer: rgba(53, 214, 160, 0.05);
+  --border: rgba(var(--ink-rgb), 0.08);
+  --border-strong: rgba(var(--ink-rgb), 0.16);
+  --border-accent: rgba(var(--accent-rgb), 0.36);
+  --accent-soft: rgba(var(--accent-rgb), 0.1);
+  --accent-softer: rgba(var(--accent-rgb), 0.05);
 
   /* Estados funcionales (no forman parte de la identidad de marca) */
   --danger: #e86a5f;
@@ -74,7 +98,7 @@
   --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.24);
   --shadow-md: 0 14px 40px -18px rgba(0, 0, 0, 0.65);
   --shadow-lg: 0 40px 90px -40px rgba(0, 0, 0, 0.8);
-  --ring: 0 0 0 3px rgba(53, 214, 160, 0.24);
+  --ring: 0 0 0 3px rgba(var(--accent-rgb), 0.24);
 
   /* Layout */
   --container: 1120px;

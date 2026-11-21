@@ -2,9 +2,10 @@ import { fileURLToPath, URL } from 'node:url';
 import { cloudflare } from '@cloudflare/vite-plugin';
 import react from '@vitejs/plugin-react';
 import { defineConfig } from 'vite';
+import { seoShells } from './scripts/vite-plugin-seo.mjs';
 
 export default defineConfig({
-  plugins: [react(), cloudflare()],
+  plugins: [react(), cloudflare(), seoShells()],
   resolve: {
     alias: {
       '@': fileURLToPath(new URL('./src/client', import.meta.url)),

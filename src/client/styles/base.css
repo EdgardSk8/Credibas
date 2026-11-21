@@ -30,8 +30,8 @@ body::before {
   inset: 0;
   pointer-events: none;
   background:
-    radial-gradient(900px 520px at 78% -6%, rgba(53, 214, 160, 0.09), transparent 62%),
-    radial-gradient(700px 420px at 8% 8%, rgba(240, 244, 242, 0.035), transparent 58%);
+    radial-gradient(900px 520px at 78% -6%, rgba(var(--accent-rgb), 0.09), transparent 62%),
+    radial-gradient(700px 420px at 8% 8%, rgba(var(--ink-rgb), 0.035), transparent 58%);
   z-index: 0;
 }
 
@@ -117,7 +117,7 @@ table {
 }
 
 ::selection {
-  background: rgba(53, 214, 160, 0.28);
+  background: rgba(var(--accent-rgb), 0.28);
   color: var(--text);
 }
 
@@ -131,13 +131,13 @@ table {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: rgba(240, 244, 242, 0.12);
+  background: rgba(var(--ink-rgb), 0.12);
   border-radius: 999px;
   border: 2px solid var(--bg);
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(240, 244, 242, 0.2);
+  background: rgba(var(--ink-rgb), 0.2);
 }
 
 .container {
@@ -181,7 +181,7 @@ table {
 }
 
 .text-accent {
-  color: var(--accent);
+  color: var(--accent-ink);
 }
 
 .text-danger {
@@ -200,7 +200,7 @@ table {
   font-weight: 700;
   letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: var(--accent);
+  color: var(--accent-ink);
 }
 
 .eyebrow::before {
@@ -271,6 +271,90 @@ table {
     scroll-behavior: auto !important;
   }
 }
+
+/* ==========================================================================
+   Modo oro (opcional)
+   Paleta: #D4AF37 (oro) + #17211F (negro verdoso) sobre fondo claro.
+   Se activa con data-theme="gold" en <html>. Es reversible en cualquier momento.
+   ========================================================================== */
+html[data-theme='gold'] {
+  color-scheme: light;
+
+  --bg: #f2f6ef;
+  --bg-rgb: 242 246 239;
+  --surface-rgb: 255 255 255;
+  --ink-rgb: 23 33 31;
+  --overlay-rgb: 23 33 31;
+
+  --surface-1: #ffffff;
+  --surface-2: #f7faf4;
+  --surface-3: #edf3e8;
+  --surface-glass: rgba(255, 255, 255, 0.78);
+  --surface-invert: #17211f;
+
+  --text: #17211f;
+  --text-muted: rgba(23, 33, 31, 0.72);
+  --text-faint: rgba(23, 33, 31, 0.48);
+  --text-invert: #f7faf4;
+
+  --border: rgba(23, 33, 31, 0.1);
+  --border-strong: rgba(23, 33, 31, 0.18);
+
+  --accent: #c9a227;
+  --accent-rgb: 201 162 39;
+  --accent-ink: #7a5e12;
+  --accent-contrast: #17211f;
+  --accent-hover: #d4af37;
+  --border-accent: rgba(201, 162, 39, 0.45);
+  --accent-soft: rgba(201, 162, 39, 0.14);
+  --accent-softer: rgba(201, 162, 39, 0.07);
+
+  --danger: #b4443a;
+  --danger-soft: rgba(180, 68, 58, 0.1);
+  --danger-text: #8e2f27;
+  --warning: #8a6516;
+  --warning-soft: rgba(201, 162, 39, 0.16);
+  --warning-text: #6e4f0f;
+  --info: #3f6f9e;
+  --info-soft: rgba(63, 111, 158, 0.1);
+
+  --sidebar-bg: rgba(255, 255, 255, 0.78);
+  --topbar-bg: rgba(242, 246, 239, 0.86);
+  --header-bg: rgba(242, 246, 239, 0.88);
+  --mobile-nav-bg: rgba(242, 246, 239, 0.98);
+  --overlay-bg: rgba(23, 33, 31, 0.42);
+
+  --surface-hover: rgba(23, 33, 31, 0.05);
+  --surface-tint: rgba(23, 33, 31, 0.035);
+  --surface-subtle: rgba(23, 33, 31, 0.02);
+
+  --shadow-sm: 0 1px 2px rgba(23, 33, 31, 0.06);
+  --shadow-md: 0 14px 40px -18px rgba(23, 33, 31, 0.18);
+  --shadow-lg: 0 40px 90px -45px rgba(23, 33, 31, 0.28);
+  --ring: 0 0 0 3px rgba(201, 162, 39, 0.28);
+}
+
+html[data-theme='gold'] .btn-primary {
+  box-shadow: 0 10px 26px -16px rgba(23, 33, 31, 0.4);
+}
+
+html[data-theme='gold'] .price-card.is-featured {
+  box-shadow: 0 24px 60px -38px rgba(23, 33, 31, 0.28);
+}
+
+html[data-theme='gold'] .app-mockup {
+  box-shadow: 0 30px 70px -40px rgba(23, 33, 31, 0.3);
+}
+
+html[data-theme='gold'] .hero-float {
+  background: rgba(255, 255, 255, 0.92);
+}
+
+html[data-theme='gold'] ::selection {
+  background: rgba(201, 162, 39, 0.24);
+  color: var(--text);
+}
+
 
 @media print {
   body {

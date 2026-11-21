@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { History, Plus, Settings2, ShieldCheck, SlidersHorizontal, Trash2, UserPlus, Users } from 'lucide-react';
+import { History, Palette, Plus, Settings2, ShieldCheck, SlidersHorizontal, Sparkles, Trash2, UserPlus, Users } from 'lucide-react';
 import { PageHeader } from '../../components/ui/PageHeader';
 import { Button } from '../../components/ui/Button';
 import { Checkbox, Input, Select } from '../../components/ui/Field';
@@ -11,6 +11,7 @@ import { api, errorMessage } from '../../lib/api';
 import { dateTime, relativeTime } from '../../lib/format';
 import { roleLabel } from '../../lib/status';
 import { useAuth } from '../../hooks/useAuth';
+import { useTheme } from '../../hooks/useTheme';
 import { useToast } from '../../components/ui/Toasts';
 import { PERMISSIONS } from '@shared/rbac';
 
@@ -62,7 +63,7 @@ interface AuditResponse {
   total: number;
 }
 
-type Tab = 'business' | 'team' | 'audit';
+type Tab = 'business' | 'team' | 'audit' | 'appearance';
 
 const timezones = [
   'America/Managua',
@@ -100,6 +101,7 @@ const allocationPresets = [
 
 export function SettingsPage() {
   const { hasPermission, refresh } = useAuth();
+  const { mode, setMode } = useTheme();
   const queryClient = useQueryClient();
   const toast = useToast();
 
@@ -268,6 +270,10 @@ export function SettingsPage() {
               Auditoría
             </button>
           )}
+          <button type="button" role="tab" className="tab" aria-selected={tab === 'appearance'} onClick={() => setTab('appearance')}>
+            <Palette size={13} />
+            Apariencia
+          </button>
         </div>
       </div>
 
@@ -401,6 +407,55 @@ export function SettingsPage() {
             </div>
           </section>
         </form>
+      )}
+
+      {tab === 'appearance' && (
+        <section className="card">
+          <div className="card-header">
+            <div>
+              <div className="card-title">
+                <span className="icon-chip">
+                  <Palette size={13} />
+                </span>
+                Apariencia
+              </div>
+              <div className="card-subtitle">El modo oro es opcional y reversible.</div>
+            </div>
+          </div>
+
+          <div className="stack">
+            <div className="row" style={{ gap: '0.5rem', flexWrap: 'wrap' }}>
+              <button
+                type="button"
+                className={`btn ${mode === 'dark' ? 'btn-primary' : 'btn-secondary'}`}
+                onClick={() => setMode('dark')}
+              >
+                Oscuro (predeterminado)
+              </button>
+              <button
+                type="button"
+                className={`btn ${mode === 'gold' ? 'btn-primary' : 'btn-secondary'}`}
+                onClick={() => setMode('gold')}
+              >
+                <Sparkles size={15} />
+                Modo oro
+              </button>
+            </div>
+
+            <div className="panel" style={{ display: 'grid', gap: '0.5rem' }}>
+              <div className="row" style={{ gap: '0.6rem' }}>
+                <span style={{ width: 28, height: 28, borderRadius: 8, background: '#D4AF37' }} />
+                <span style={{ width: 28, height: 28, borderRadius: 8, background: '#17211F' }} />
+                <span style={{ width: 28, height: 28, borderRadius: 8, background: '#F2F6EF', border: '1px solid var(--border-strong)' }} />
+                <span style={{ fontSize: 'var(--text-xs)', color: 'var(--text-muted)' }}>#D4AF37 · #17211F · fondo #F2F6EF</span>
+              </div>
+              <p className="field-hint">
+                El modo oro usa la paleta dorada de la marca sobre un fondo claro verdoso. Se guarda solo en este
+                navegador, no cambia datos del negocio y puedes volver al modo oscuro con un clic.
+              </p>
+            </div>
+          </div>
+        </section>
       )}
 
       {tab === 'team' && (

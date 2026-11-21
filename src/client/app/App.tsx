@@ -1,6 +1,7 @@
 import { Navigate, Route, Routes, useLocation } from 'react-router-dom';
 import { lazy, Suspense, type ReactNode } from 'react';
 import { useAuth } from '../hooks/useAuth';
+import { SeoManager } from '../lib/seo';
 import { PublicLayout } from '../components/layout/PublicLayout';
 import { AppLayout } from '../components/layout/AppLayout';
 import { LoadingBlock } from '../components/ui/EmptyState';
@@ -91,6 +92,7 @@ export function App() {
         </div>
       }
     >
+      <SeoManager />
       <Routes>
       <Route element={<PublicLayout />}>
         <Route index element={<LandingPage />} />

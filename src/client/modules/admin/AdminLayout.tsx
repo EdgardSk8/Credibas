@@ -1,7 +1,8 @@
 import { Link, NavLink, Outlet, useNavigate } from 'react-router-dom';
-import { Building2, CreditCard, LayoutDashboard, LogOut, ArrowLeft, Shield } from 'lucide-react';
+import { Building2, CreditCard, LayoutDashboard, LogOut, ArrowLeft, Shield, Moon, Sparkles } from 'lucide-react';
 import { Logo } from '../../components/brand/Logo';
 import { useAuth } from '../../hooks/useAuth';
+import { useTheme } from '../../hooks/useTheme';
 import { initials } from '../../lib/format';
 
 const links = [
@@ -12,6 +13,7 @@ const links = [
 
 export function AdminLayout() {
   const { me, logout } = useAuth();
+  const { isGold, toggle: toggleTheme } = useTheme();
   const navigate = useNavigate();
 
   return (
@@ -55,6 +57,14 @@ export function AdminLayout() {
               <span>{me?.user.email}</span>
             </span>
           </div>
+          <button
+            type="button"
+            className="sidebar-link"
+            onClick={toggleTheme}
+          >
+            {isGold ? <Moon size={17} /> : <Sparkles size={17} />}
+            {isGold ? 'Modo oscuro' : 'Modo oro'}
+          </button>
           <button
             type="button"
             className="sidebar-link"

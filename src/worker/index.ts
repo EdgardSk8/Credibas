@@ -2,7 +2,6 @@ import { app } from './app';
 import { handleQueue, runScheduled } from './jobs/handlers';
 import type { Env, ExecutionContext, MessageBatch, ScheduledController } from './env';
 import type { JobMessage } from './jobs/types';
-
 /**
  * Entrypoint del Worker: API, tareas programadas (Cron) y cola de trabajos.
  */
