@@ -1,14 +1,14 @@
 :root {
   /* Identidad Credibas */
-  --bg: #101817;
+  --bg: #16211f;
   --accent: #35d6a0;
   --paper: #f0f4f2;
 
   /* Canales RGB para superficies translúcidas (permiten cambiar de tema) */
   --ink-rgb: 240, 244, 242;
   --accent-rgb: 53, 214, 160;
-  --surface-rgb: 22, 33, 31;
-  --bg-rgb: 16, 24, 23;
+  --surface-rgb: 27, 39, 37;
+  --bg-rgb: 22, 33, 31;
   --overlay-rgb: 8, 13, 12;
 
   /* Contraste sobre el color de acento y estados de texto */
@@ -19,9 +19,9 @@
   --warning-text: #f6e4b8;
 
   /* Superficies derivadas del fondo (solo opacidades) */
-  --surface-1: #16211f;
-  --surface-2: #1a2624;
-  --surface-3: #1f2d2a;
+  --surface-1: #1b2725;
+  --surface-2: #20302c;
+  --surface-3: #263833;
   --surface-glass: rgba(var(--surface-rgb), 0.72);
   --surface-invert: #f0f4f2;
 

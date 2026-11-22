@@ -4,7 +4,7 @@ export type ThemeMode = 'dark' | 'gold';
 
 const STORAGE_KEY = 'credibas-theme';
 const THEME_COLORS: Record<ThemeMode, string> = {
-  dark: '#101817',
+  dark: '#16211f',
   gold: '#f2f6ef',
 };
 
