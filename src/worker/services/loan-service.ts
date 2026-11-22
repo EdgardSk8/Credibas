@@ -1,6 +1,7 @@
 import type { Db } from '../db';
 import type { Env } from '../env';
 import type { JobMessage } from '../jobs/types';
+import { enqueueJob } from '../jobs/queue';
 import { AppError } from '../lib/errors';
 import { generateSchedule } from '../../shared/finance/schedule';
 import { addFrequency, todayInTimezone } from '../../shared/finance/dates';
@@ -135,7 +136,7 @@ export async function createLoanForOrganization(
     }
   }
 
-  await env.JOBS.send({
+  await enqueueJob(env, {
     type: 'maintenance.refresh-overdue',
     orgId: context.orgId,
     asOfDate: todayInTimezone(context.orgTimezone),

@@ -1,6 +1,7 @@
 import type { Db } from '../db';
 import type { Env } from '../env';
 import type { JobMessage } from '../jobs/types';
+import { enqueueJob } from '../jobs/queue';
 import { AppError } from '../lib/errors';
 import { allocateExtraPrincipal, allocatePayment } from '../../shared/finance/allocation';
 import { calculateLateFeeCents } from '../../shared/finance/late-fees';
@@ -241,7 +242,7 @@ export async function registerPayment(
       loan.code,
       input.paidAt,
     );
-    await env.JOBS.send({
+    await enqueueJob(env, {
       type: 'email.send',
       to: client.email,
       subject: receipt.subject,
