@@ -101,6 +101,16 @@ Secretos requeridos en GitHub:
 | `CLOUDFLARE_API_TOKEN` | Token con permisos de Workers, D1, R2 y Queues |
 | `CLOUDFLARE_ACCOUNT_ID` | ID de la cuenta |
 
+## 8.1 Sitio de pruebas en Cloudflare Pages
+
+`https://credibas.pages.dev` es el entorno de pruebas conectado al repositorio `EdgardSk8/Credibas`.
+
+- Proyecto Pages: `credibas`, rama de producción: `preview`. Cada push a `preview` reconstruye el sitio; `main` queda reservado para el Worker de producción.
+- Build: `npm run build`, salida `dist/client`, Node 22.
+- API: `functions/api/[[route]].ts` reutiliza la misma app Hono del Worker.
+- Bindings: D1 `credibas-db` (la base de producción) y R2 `credibas-files`. Pages no soporta Queues ni Cron; `enqueueJob` omite los envíos a cola en ese entorno.
+- Variables y secretos: los mismos del Worker, con `APP_URL=https://credibas.pages.dev`. Se administran en el dashboard de Pages (Settings → Variables and Secrets).
+
 ## 9. Verificación post-despliegue
 
 1. `GET /api/public/health` responde `ok: true`.
