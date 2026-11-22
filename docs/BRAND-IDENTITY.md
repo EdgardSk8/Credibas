@@ -167,41 +167,39 @@ Los datos describen lo que la página realmente muestra; no se inventan valoraci
 
 ---
 
-## 7. Modo oro (opcional y reversible)
+## 7. Tema claro (oro) predeterminado
 
-Segunda paleta, pensada para una presentación más corporativa sobre fondo claro:
+La presentación principal de Credibas es clara, corporativa y con dorado. El modo oscuro queda disponible como preferencia opcional:
 
 | Token | Valor |
 | --- | --- |
-| Dorado de marca | `#D4AF37` |
-| Negro verdoso | `#17211F` |
+| Dorado de marca (acento) | `#D4AF37` |
+| Dorado de relleno (hover) | `#C9A227` |
+| Negro verdoso (texto) | `#17211F` |
 | Fondo claro verdoso | `#F2F6EF` |
 | Dorado de texto (contraste) | `#7A5E12` |
-| Dorado de relleno | `#C9A227` |
 
-El modo se activa con `data-theme="gold"` en `<html>`. **No cambia datos ni permisos**: es solo presentación.
+El tema se aplica con `data-theme="gold"` en `<html>` (es el valor por defecto). **No cambia datos ni permisos**: es solo presentación.
 
-### Cómo activarlo
+### Cómo volver al modo oscuro
 
-- **Menú de cuenta** (arriba a la derecha) → «Probar modo oro».
-- **Configuración → Apariencia** → «Modo oro».
+- **Menú de cuenta** (arriba a la derecha) → «Volver al modo oscuro».
+- **Configuración → Apariencia** → «Modo oscuro».
 
-### Cómo desactivarlo
+El tema elegido se guarda en `localStorage` (`credibas-theme-v2`, valores `gold` o `dark`) y se aplica antes del primer pintado con `public/theme-init.js`, evitando el destello de tema.
 
-El mismo botón vuelve al modo oscuro. La preferencia se guarda en `localStorage` (`credibas-theme`) y se aplica antes del primer pintado con `public/theme-init.js`, evitando el destello de tema.
-
-También puedes forzarlo temporalmente desde la consola:
-
-```js
-document.documentElement.setAttribute('data-theme', 'gold');
-localStorage.setItem('credibas-theme', 'gold');
-```
-
-Para volver:
+También puedes cambiarlo desde la consola:
 
 ```js
 document.documentElement.removeAttribute('data-theme');
-localStorage.setItem('credibas-theme', 'dark');
+localStorage.setItem('credibas-theme-v2', 'dark');
+```
+
+Para volver al claro:
+
+```js
+document.documentElement.setAttribute('data-theme', 'gold');
+localStorage.setItem('credibas-theme-v2', 'gold');
 ```
 
 ### Cómo está construido

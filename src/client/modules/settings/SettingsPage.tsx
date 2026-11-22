@@ -419,7 +419,7 @@ export function SettingsPage() {
                 </span>
                 Apariencia
               </div>
-              <div className="card-subtitle">El modo oro es opcional y reversible.</div>
+              <div className="card-subtitle">El tema claro con dorado es el predeterminado; el oscuro es opcional.</div>
             </div>
           </div>
 
@@ -427,18 +427,18 @@ export function SettingsPage() {
             <div className="row" style={{ gap: '0.5rem', flexWrap: 'wrap' }}>
               <button
                 type="button"
-                className={`btn ${mode === 'dark' ? 'btn-primary' : 'btn-secondary'}`}
-                onClick={() => setMode('dark')}
-              >
-                Oscuro (predeterminado)
-              </button>
-              <button
-                type="button"
                 className={`btn ${mode === 'gold' ? 'btn-primary' : 'btn-secondary'}`}
                 onClick={() => setMode('gold')}
               >
                 <Sparkles size={15} />
-                Modo oro
+                Claro (predeterminado)
+              </button>
+              <button
+                type="button"
+                className={`btn ${mode === 'dark' ? 'btn-primary' : 'btn-secondary'}`}
+                onClick={() => setMode('dark')}
+              >
+                Oscuro
               </button>
             </div>
 

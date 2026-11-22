@@ -145,7 +145,7 @@ export function DashboardPage() {
                   <i className="legend-swatch" style={{ background: 'var(--accent)' }} /> Cobrado
                 </span>
                 <span className="legend-item">
-                  <i className="legend-swatch" style={{ background: 'rgba(240,244,242,0.2)' }} /> Colocado
+                  <i className="legend-swatch" style={{ background: 'rgba(var(--ink-rgb), 0.2)' }} /> Colocado
                 </span>
               </div>
             </div>

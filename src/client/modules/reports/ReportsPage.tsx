@@ -301,7 +301,7 @@ export function ReportsPage() {
                   <i className="legend-swatch" style={{ background: 'var(--accent)' }} /> Ingresos
                 </span>
                 <span className="legend-item">
-                  <i className="legend-swatch" style={{ background: 'rgba(240,244,242,0.2)' }} /> Egresos
+                  <i className="legend-swatch" style={{ background: 'rgba(var(--ink-rgb), 0.2)' }} /> Egresos
                 </span>
               </div>
             </>

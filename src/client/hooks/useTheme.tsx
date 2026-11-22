@@ -2,7 +2,7 @@ import { createContext, useCallback, useContext, useEffect, useMemo, useState, t
 
 export type ThemeMode = 'dark' | 'gold';
 
-const STORAGE_KEY = 'credibas-theme';
+const STORAGE_KEY = 'credibas-theme-v2';
 const THEME_COLORS: Record<ThemeMode, string> = {
   dark: '#16211f',
   gold: '#f2f6ef',
@@ -19,9 +19,9 @@ const ThemeContext = createContext<ThemeContextValue | null>(null);
 
 function readStoredTheme(): ThemeMode {
   try {
-    return window.localStorage.getItem(STORAGE_KEY) === 'gold' ? 'gold' : 'dark';
+    return window.localStorage.getItem(STORAGE_KEY) === 'dark' ? 'dark' : 'gold';
   } catch {
-    return 'dark';
+    return 'gold';
   }
 }
 
