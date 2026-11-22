@@ -43,15 +43,17 @@ function button(label: string, url: string): string {
 <p style="margin:0;font-size:12px;color:rgba(240,244,242,0.55);word-break:break-all;">${url}</p>`;
 }
 
-export function verificationEmail(name: string, url: string): { subject: string; html: string; text: string } {
+export function verificationCodeEmail(name: string, code: string): { subject: string; html: string; text: string } {
   return {
-    subject: 'Confirma tu correo en Credibas',
+    subject: 'Tu código de verificación de Credibas',
     html: layout(
       `Hola, ${name}`,
-      `<p style="margin:0 0 12px 0;">Confirma tu correo para activar tu cuenta y comenzar a configurar tu negocio.</p>${button('Confirmar correo', url)}<p style="margin:16px 0 0 0;font-size:13px;color:rgba(240,244,242,0.65);">El enlace expira en 24 horas y solo puede usarse una vez.</p>`,
+      `<p style="margin:0 0 12px 0;">Usa este código para confirmar tu correo y activar tu cuenta:</p>
+       <p style="margin:20px 0;padding:16px 0;text-align:center;font-size:30px;font-weight:700;letter-spacing:10px;color:${ACCENT};border:1px solid rgba(53,214,160,0.35);border-radius:12px;background:rgba(53,214,160,0.08);">${code}</p>
+       <p style="margin:16px 0 0 0;font-size:13px;color:rgba(240,244,242,0.65);">El código expira en 10 minutos y solo puede usarse una vez. Si no lo solicitaste, ignora este correo.</p>`,
       'Si no creaste una cuenta en Credibas, ignora este correo.',
     ),
-    text: `Hola, ${name}. Confirma tu correo en Credibas: ${url} (expira en 24 horas).`,
+    text: `Hola, ${name}. Tu código de verificación de Credibas es ${code} (expira en 10 minutos).`,
   };
 }
 

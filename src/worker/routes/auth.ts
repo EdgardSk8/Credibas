@@ -21,19 +21,20 @@ import { writeAudit } from '../repositories/audit';
 import {
   authenticate,
   changePassword,
-  issueEmailVerification,
   registerAccount,
   requestPasswordReset,
+  resendVerificationEmail,
   resetPasswordWithToken,
-  verifyEmailToken,
+  verifyEmailCode,
 } from '../services/auth-service';
 import {
   changePasswordSchema,
   forgotPasswordSchema,
   loginSchema,
   registerSchema,
+  resendVerificationSchema,
   resetPasswordSchema,
-  verifyEmailSchema,
+  verifyEmailCodeSchema,
 } from '../../shared/validation';
 import type { MeResponse, MembershipSummary } from '../../shared/types';
 import type { AppEnv } from '../types';
@@ -111,7 +112,7 @@ authRoutes.post('/register', async (c) => {
   return c.json(
     {
       ok: true,
-      message: 'Cuenta creada. Revisa tu correo para confirmarla antes de ingresar.',
+      message: 'Cuenta creada. Enviamos un código de 6 dígitos a tu correo para confirmarla.',
     },
     201,
   );
@@ -146,27 +147,18 @@ authRoutes.get('/me', async (c) => {
   return c.json(me);
 });
 
-authRoutes.post('/verify-email', async (c) => {
+authRoutes.post('/verify-email-code', async (c) => {
   const db = dbFrom(c.env.DB);
-  const input = await parseBody(c, verifyEmailSchema);
-  await verifyEmailToken(c.env, db, input.token, requestMeta(c), Date.now());
+  const input = await parseBody(c, verifyEmailCodeSchema);
+  await verifyEmailCode(db, input.email, input.code, requestMeta(c), Date.now());
   return c.json({ ok: true, message: 'Correo confirmado. Ya puedes iniciar sesión.' });
 });
 
-authRoutes.post('/resend-verification', requireAuth, async (c) => {
+authRoutes.post('/resend-verification', async (c) => {
   const db = dbFrom(c.env.DB);
-  const user = await findUserById(db, c.get('userId') as string);
-  if (!user) throw AppError.unauthorized();
-  if (user.email_verified_at) return c.json({ ok: true });
-
-  await issueEmailVerification(
-    c.env,
-    db,
-    { id: user.id, email: user.email, fullName: user.full_name },
-    Date.now(),
-    requestMeta(c),
-  );
-  return c.json({ ok: true, message: 'Te enviamos un nuevo enlace de verificación.' });
+  const input = await parseBody(c, resendVerificationSchema);
+  await resendVerificationEmail(c.env, db, input.email, requestMeta(c), Date.now());
+  return c.json({ ok: true, message: 'Si el correo necesita confirmación, enviamos un nuevo código.' });
 });
 
 authRoutes.post('/forgot-password', async (c) => {

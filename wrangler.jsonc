@@ -12,17 +12,19 @@
     "head_sampling_rate": 1
   },
   "vars": {
-    "APP_ENV": "development",
+    "APP_ENV": "production",
     "APP_NAME": "Credibas",
-    "APP_URL": "http://localhost:5173",
-    "EMAIL_PROVIDER": "console",
+    "APP_URL": "https://credibas.osais1000.workers.dev",
+    "EMAIL_PROVIDER": "relay",
+    "EMAIL_FROM_NAME": "tellezsoftware",
+    "TURNSTILE_SITE_KEY": "0x4AAAAAAGMkefz_ChxhnyOW",
     "PAYMENTS_PROVIDER": "manual"
   },
   "d1_databases": [
     {
       "binding": "DB",
       "database_name": "credibas-db",
-      "database_id": "REPLACE_WITH_D1_DATABASE_ID",
+      "database_id": "94f4c922-3c9c-41bc-a5be-cb0a2fbbebdc",
       "migrations_dir": "migrations"
     }
   ],

@@ -5,11 +5,11 @@
   --paper: #f0f4f2;
 
   /* Canales RGB para superficies translúcidas (permiten cambiar de tema) */
-  --ink-rgb: 240 244 242;
-  --accent-rgb: 53 214 160;
-  --surface-rgb: 22 33 31;
-  --bg-rgb: 16 24 23;
-  --overlay-rgb: 8 13 12;
+  --ink-rgb: 240, 244, 242;
+  --accent-rgb: 53, 214, 160;
+  --surface-rgb: 22, 33, 31;
+  --bg-rgb: 16, 24, 23;
+  --overlay-rgb: 8, 13, 12;
 
   /* Contraste sobre el color de acento y estados de texto */
   --accent-contrast: #06251b;

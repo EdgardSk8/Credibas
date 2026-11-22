@@ -9,28 +9,28 @@ export const currencySchema = z.enum(['NIO', 'USD']);
  */
 export const idSchema = z
   .string()
-  .regex(/^[a-z]{3}_[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i, 'Identificador invÃ¡lido');
+  .regex(/^[a-z]{3}_[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i, 'Identificador inválido');
 
 export const passwordSchema = z
   .string()
-  .min(10, 'La contraseÃ±a debe tener al menos 10 caracteres')
-  .max(128, 'La contraseÃ±a es demasiado larga')
-  .regex(/[A-Za-zÃÃ‰ÃÃ“ÃšÃœÃ‘Ã¡Ã©Ã­Ã³ÃºÃ¼Ã±]/, 'La contraseÃ±a debe incluir al menos una letra')
-  .regex(/\d/, 'La contraseÃ±a debe incluir al menos un nÃºmero');
+  .min(8, 'La contraseña debe tener al menos 8 caracteres')
+  .max(128, 'La contraseña es demasiado larga')
+  .regex(/[A-Za-zÁÉÍÓÚÜÑáéíóúüñ]/, 'La contraseña debe incluir al menos una letra')
+  .regex(/\d/, 'La contraseña debe incluir al menos un número');
 
-export const emailSchema = z.email('Ingresa un correo vÃ¡lido').max(254).transform((value) => value.trim().toLowerCase());
+export const emailSchema = z.email('Ingresa un correo válido').max(254).transform((value) => value.trim().toLowerCase());
 
 export const registerSchema = z.object({
   fullName: z.string().trim().min(2, 'Ingresa tu nombre').max(120),
   email: emailSchema,
   password: passwordSchema,
   turnstileToken: z.string().optional(),
-  acceptTerms: z.literal(true, { message: 'Debes aceptar los tÃ©rminos y la polÃ­tica de privacidad' }),
+  acceptTerms: z.literal(true, { message: 'Debes aceptar los términos y la política de privacidad' }),
 });
 
 export const loginSchema = z.object({
   email: emailSchema,
-  password: z.string().min(1, 'Ingresa tu contraseÃ±a').max(200),
+  password: z.string().min(1, 'Ingresa tu contraseña').max(200),
   turnstileToken: z.string().optional(),
 });
 
@@ -46,7 +46,15 @@ export const changePasswordSchema = z.object({
   newPassword: passwordSchema,
 });
 
-export const verifyEmailSchema = z.object({ token: z.string().min(20).max(500) });
+export const verifyEmailCodeSchema = z.object({
+  email: emailSchema,
+  code: z
+    .string()
+    .trim()
+    .regex(/^\d{6}$/, 'Ingresa el código de 6 dígitos'),
+});
+
+export const resendVerificationSchema = z.object({ email: emailSchema });
 
 export const createOrganizationSchema = z.object({
   name: z.string().trim().min(2, 'El nombre del negocio es obligatorio').max(120),
@@ -91,7 +99,7 @@ export const clientInputSchema = z.object({
     .nullable()
     .optional()
     .transform((value) => (value ? value.toLowerCase() : null))
-    .refine((value) => value === null || /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value), 'Correo invÃ¡lido'),
+    .refine((value) => value === null || /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value), 'Correo inválido'),
   address: optionalText(240),
   references: z.array(clientReferenceSchema).max(10).default([]),
   notes: optionalText(2000),
@@ -127,7 +135,7 @@ export const loanInputSchema = z
       ctx.addIssue({
         code: 'custom',
         path: ['customDays'],
-        message: 'Indica cada cuÃ¡ntos dÃ­as se cobra',
+        message: 'Indica cada cuántos días se cobra',
       });
     }
   });
@@ -150,7 +158,7 @@ export const paymentInputSchema = z.object({
 });
 
 export const reversePaymentSchema = z.object({
-  reason: z.string().trim().min(10, 'Describe el motivo de la reversiÃ³n').max(500),
+  reason: z.string().trim().min(10, 'Describe el motivo de la reversión').max(500),
 });
 
 export const collectionAssignmentSchema = z.object({
@@ -252,7 +260,7 @@ export const publicContactSchema = z.object({
   name: z.string().trim().min(2).max(120),
   email: emailSchema,
   company: optionalText(120),
-  message: z.string().trim().min(10, 'CuÃ©ntanos un poco mÃ¡s').max(2000),
+  message: z.string().trim().min(10, 'Cuéntanos un poco más').max(2000),
   turnstileToken: z.string().optional(),
 });
 

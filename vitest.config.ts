@@ -13,6 +13,7 @@ export default defineConfig({
           APP_ENV: 'test',
           APP_URL: 'http://localhost',
           PASSWORD_ITERATIONS: '10000',
+          EMAIL_PROVIDER: 'console',
         },
       },
     }),

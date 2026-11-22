@@ -48,6 +48,8 @@ La migración `0002_seed.sql` inserta permisos, planes y límites. Es idempotent
 ```bash
 npx wrangler secret put TURNSTILE_SECRET
 npx wrangler secret put RESEND_API_KEY          # si EMAIL_PROVIDER=resend
+npx wrangler secret put MAIL_RELAY_URL          # si EMAIL_PROVIDER=relay (ver EMAIL-RELAY.md)
+npx wrangler secret put MAIL_RELAY_SECRET       # si EMAIL_PROVIDER=relay
 npx wrangler secret put BILLING_WEBHOOK_SECRET  # cuando exista proveedor
 ```
 

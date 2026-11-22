@@ -2,15 +2,20 @@ import { useState } from 'react';
 import { Mail, MessageSquare, ShieldCheck, Building2 } from 'lucide-react';
 import { Button } from '../../components/ui/Button';
 import { Input, Textarea } from '../../components/ui/Field';
+import { TurnstileWidget } from '../../components/ui/Turnstile';
 import { api, errorMessage } from '../../lib/api';
 import { useToast } from '../../components/ui/Toasts';
+import { usePublicConfig } from '../../hooks/usePublicConfig';
 
 export function ContactPage() {
   const toast = useToast();
+  const { turnstileSiteKey } = usePublicConfig();
   const [form, setForm] = useState({ name: '', email: '', company: '', message: '' });
   const [loading, setLoading] = useState(false);
   const [sent, setSent] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
+  const [turnstileKey, setTurnstileKey] = useState(0);
 
   const onSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
@@ -24,16 +29,24 @@ export function ContactPage() {
       setErrors(nextErrors);
       return;
     }
+    if (turnstileSiteKey && !turnstileToken) {
+      toast.error('Completa la verificación anti-bots e intenta de nuevo.');
+      return;
+    }
 
     setLoading(true);
     try {
-      await api.post('/api/public/contact', form);
+      await api.post('/api/public/contact', { ...form, turnstileToken: turnstileToken ?? undefined });
       setSent(true);
       toast.success('Mensaje enviado. Te respondemos pronto.');
     } catch (error) {
       toast.error(errorMessage(error));
     } finally {
       setLoading(false);
+      if (turnstileSiteKey) {
+        setTurnstileToken(null);
+        setTurnstileKey((value) => value + 1);
+      }
     }
   };
 
@@ -142,6 +155,9 @@ export function ContactPage() {
                 <Button type="submit" variant="primary" loading={loading} block>
                   Enviar mensaje
                 </Button>
+
+                {turnstileSiteKey && <TurnstileWidget key={turnstileKey} siteKey={turnstileSiteKey} onToken={setTurnstileToken} />}
+
                 <p className="field-hint" style={{ textAlign: 'center' }}>
                   Al enviar aceptas nuestra política de privacidad.
                 </p>

@@ -21,6 +21,12 @@ publicRoutes.get('/health', (c) =>
   }),
 );
 
+publicRoutes.get('/config', (c) =>
+  c.json({
+    turnstileSiteKey: c.env.TURNSTILE_SITE_KEY || null,
+  }),
+);
+
 publicRoutes.get('/plans', async (c) => {
   const db = dbFrom(c.env.DB);
   const plans = await listPublicPlans(db);

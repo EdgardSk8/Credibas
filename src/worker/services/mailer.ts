@@ -21,14 +21,18 @@ function fromAddress(env: Env): { email: string; name: string } {
 }
 
 /**
- * Envío de correo desacoplado del proveedor. En desarrollo (`console`) solo
- * escribe un resumen sin datos sensibles en el log.
+ * Envío de correo desacoplado del proveedor. En desarrollo (`console`) escribe
+ * un resumen en el log y, fuera de producción, el contenido del correo para
+ * poder copiar los enlaces de verificación o recuperación desde la terminal.
  */
 export async function sendEmail(env: Env, message: MailMessage): Promise<void> {
   const provider = (env.EMAIL_PROVIDER ?? 'console').toLowerCase();
 
   if (provider === 'console') {
     console.log(`[email:console] to=${message.to} subject="${message.subject}"`);
+    if ((env.APP_ENV ?? 'development') !== 'production') {
+      console.log(`[email:console] ${message.text}`);
+    }
     return;
   }
 
@@ -67,6 +71,38 @@ export async function sendEmail(env: Env, message: MailMessage): Promise<void> {
     if (!response.ok) {
       const body = (await response.json().catch(() => ({}))) as ResendResponse;
       console.error(`[email:resend] status=${response.status} message=${body.message ?? 'unknown'}`);
+      throw new AppError('email_failed', 502, 'No pudimos enviar el correo. Intenta de nuevo.');
+    }
+    return;
+  }
+
+  // Relay HTTP propio (Google Apps Script + Gmail). Ver docs/EMAIL-RELAY.md.
+  if (provider === 'relay' || provider === 'gmail') {
+    if (!env.MAIL_RELAY_URL || !env.MAIL_RELAY_SECRET) {
+      throw new AppError('email_unavailable', 503, 'El relay de correo no está configurado');
+    }
+
+    let response: Response;
+    try {
+      response = await fetch(env.MAIL_RELAY_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          secret: env.MAIL_RELAY_SECRET,
+          to: message.to,
+          subject: message.subject,
+          html: message.html ?? `<p>${message.text}</p>`,
+          text: message.text,
+          fromName: fromAddress(env).name,
+        }),
+      });
+    } catch {
+      throw new AppError('email_failed', 502, 'No pudimos enviar el correo. Intenta de nuevo.');
+    }
+
+    const result = (await response.json().catch(() => null)) as { ok?: boolean; error?: string } | null;
+    if (!response.ok || result?.ok !== true) {
+      console.error(`[email:relay] status=${response.status} error=${result?.error ?? 'unknown'}`);
       throw new AppError('email_failed', 502, 'No pudimos enviar el correo. Intenta de nuevo.');
     }
     return;

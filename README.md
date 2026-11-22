@@ -55,6 +55,7 @@ Requisitos: Node 22+, npm 11+.
 
 ```bash
 npm install
+copy .dev.vars.example .dev.vars   # Windows (bash: cp .dev.vars.example .dev.vars)
 npm run dev
 ```
 
@@ -64,7 +65,11 @@ La primera vez, aplica las migraciones a la base local:
 npm run db:migrate:local
 ```
 
-Abre `http://localhost:5173`. El correo se imprime en la consola del servidor (proveedor `console`), así que puedes copiar el enlace de verificación desde la terminal.
+Abre `http://localhost:5173`. Con el `.dev.vars` de ejemplo (`EMAIL_PROVIDER=console`) el correo se imprime en la consola del servidor, incluido el código de verificación de 6 dígitos. Para enviar correos reales por Gmail configura `EMAIL_PROVIDER=relay` y las variables del [relay](docs/EMAIL-RELAY.md).
+
+### Servidor en la red local (LAN)
+
+En Windows, ejecuta `iniciar-servidor.bat` (doble clic). Levanta Vite en `0.0.0.0:5173`, crea la regla de firewall del puerto si la consola es de administrador y muestra la URL para otros dispositivos, por ejemplo `http://192.168.1.10:5173`. Si el puerto sigue bloqueado, acepta el aviso de firewall de Node.js para redes privadas.
 
 ### Scripts
 
@@ -87,6 +92,7 @@ Abre `http://localhost:5173`. El correo se imprime en la consola del servidor (p
 - [Base de datos](docs/DATABASE.md)
 - [Cálculos financieros](docs/FINANCIAL-CALCULATIONS.md)
 - [Seguridad](docs/SECURITY.md)
+- [Relay de correo (Gmail)](docs/EMAIL-RELAY.md)
 - [Despliegue](docs/DEPLOYMENT.md)
 - [Variables de entorno](docs/ENVIRONMENT.md)
 - [Suscripciones y planes](docs/SUBSCRIPTIONS.md)

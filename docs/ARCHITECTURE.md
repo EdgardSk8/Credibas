@@ -49,7 +49,7 @@ Se implementó autenticación propia sobre primitivas estándar de la plataforma
 
 - Contraseñas: **PBKDF2-SHA256** vía WebCrypto, 600.000 iteraciones por defecto (configurable con `PASSWORD_ITERATIONS`), sal aleatoria de 16 bytes por usuario, comparación en tiempo constante.
 - Sesiones: token opaco de 256 bits en cookie `HttpOnly`, `Secure` (cuando HTTPS), `SameSite=Lax`; en D1 solo se guarda el SHA-256 del token.
-- Verificación de correo y recuperación de contraseña: tokens de un solo uso, hasheados, con expiración y consumo atómico (`UPDATE ... RETURNING`).
+- Verificación de correo: **código de 6 dígitos** (CSPRNG) guardado solo como hash ligado al usuario, vigencia de 10 minutos, máximo 5 intentos por código, cooldown de 60 segundos y máximo 5 envíos por hora. Comparación en tiempo constante. Recuperación de contraseña e invitaciones siguen usando tokens de un solo uso hasheados con expiración y consumo atómico (`UPDATE ... RETURNING`).
 - Bloqueo progresivo por intentos fallidos y rate limiting por IP/correo.
 - CSRF: validación de `Origin`/`Referer` en métodos mutables + `SameSite=Lax`.
 

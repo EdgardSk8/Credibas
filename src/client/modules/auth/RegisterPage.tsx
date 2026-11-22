@@ -2,17 +2,22 @@ import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { CheckCircle2, Mail } from 'lucide-react';
 import { AuthShell } from './AuthShell';
-import { Checkbox, Input } from '../../components/ui/Field';
+import { Checkbox, Input, PasswordInput } from '../../components/ui/Field';
+import { TurnstileWidget } from '../../components/ui/Turnstile';
 import { Button } from '../../components/ui/Button';
 import { api, errorMessage } from '../../lib/api';
+import { usePublicConfig } from '../../hooks/usePublicConfig';
 
 export function RegisterPage() {
+  const { turnstileSiteKey } = usePublicConfig();
   const [form, setForm] = useState({ fullName: '', email: '', password: '', confirm: '' });
   const [acceptTerms, setAcceptTerms] = useState(false);
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [formError, setFormError] = useState<string | null>(null);
   const [done, setDone] = useState(false);
+  const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
+  const [turnstileKey, setTurnstileKey] = useState(0);
 
   const onSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
@@ -22,7 +27,7 @@ export function RegisterPage() {
     const nextErrors: Record<string, string> = {};
     if (form.fullName.trim().length < 2) nextErrors.fullName = 'Ingresa tu nombre completo';
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) nextErrors.email = 'Ingresa un correo válido';
-    if (form.password.length < 10) nextErrors.password = 'Usa al menos 10 caracteres';
+    if (form.password.length < 8) nextErrors.password = 'Usa al menos 8 caracteres';
     else if (!/[A-Za-zÁÉÍÓÚÜÑáéíóúüñ]/.test(form.password) || !/\d/.test(form.password)) {
       nextErrors.password = 'Incluye al menos una letra y un número';
     }
@@ -33,6 +38,10 @@ export function RegisterPage() {
       setErrors(nextErrors);
       return;
     }
+    if (turnstileSiteKey && !turnstileToken) {
+      setFormError('Completa la verificación anti-bots e intenta de nuevo.');
+      return;
+    }
 
     setLoading(true);
     try {
@@ -40,6 +49,7 @@ export function RegisterPage() {
         fullName: form.fullName.trim(),
         email: form.email.trim().toLowerCase(),
         password: form.password,
+        turnstileToken: turnstileToken ?? undefined,
         acceptTerms: true,
       });
       setDone(true);
@@ -47,6 +57,10 @@ export function RegisterPage() {
       setFormError(errorMessage(error));
     } finally {
       setLoading(false);
+      if (turnstileSiteKey) {
+        setTurnstileToken(null);
+        setTurnstileKey((value) => value + 1);
+      }
     }
   };
 
@@ -54,7 +68,7 @@ export function RegisterPage() {
     return (
       <AuthShell
         title="Revisa tu correo"
-        subtitle="Enviamos un enlace para confirmar tu cuenta."
+        subtitle="Enviamos un código de 6 dígitos para confirmar tu cuenta."
         footer={
           <>
             ¿Ya confirmaste? <Link to="/login" className="link">Inicia sesión</Link>
@@ -67,9 +81,14 @@ export function RegisterPage() {
             {form.email}
           </span>
           <span>
-            El enlace expira en 24 horas y solo puede usarse una vez. Si no lo encuentras, revisa la carpeta de spam.
+            El código expira en 10 minutos y solo puede usarse una vez. Si no lo encuentras, revisa la carpeta de spam.
           </span>
         </div>
+        <Link to={`/verificar-correo?email=${encodeURIComponent(form.email)}`}>
+          <Button variant="primary" block size="lg">
+            Ingresar código
+          </Button>
+        </Link>
         <div className="row" style={{ gap: '0.5rem', color: 'var(--accent)', fontSize: 'var(--text-sm)' }}>
           <CheckCircle2 size={16} />
           Confirmar tu correo es obligatorio para ingresar.
@@ -117,20 +136,18 @@ export function RegisterPage() {
         />
 
         <div className="field-grid">
-          <Input
+          <PasswordInput
             label="Contraseña"
-            type="password"
             required
             autoComplete="new-password"
             value={form.password}
             error={errors.password}
             onChange={(event) => setForm({ ...form, password: event.target.value })}
-            placeholder="Mínimo 10 caracteres"
+            placeholder="Mínimo 8 caracteres"
             hint="Al menos una letra y un número"
           />
-          <Input
+          <PasswordInput
             label="Confirmar contraseña"
-            type="password"
             required
             autoComplete="new-password"
             value={form.confirm}
@@ -150,6 +167,8 @@ export function RegisterPage() {
           onChange={(event) => setAcceptTerms(event.target.checked)}
         />
         {errors.terms && <span className="field-error">{errors.terms}</span>}
+
+        {turnstileSiteKey && <TurnstileWidget key={turnstileKey} siteKey={turnstileSiteKey} onToken={setTurnstileToken} />}
 
         <Button type="submit" variant="primary" block size="lg" loading={loading}>
           Crear cuenta

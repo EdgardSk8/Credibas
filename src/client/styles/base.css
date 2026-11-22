@@ -281,10 +281,10 @@ html[data-theme='gold'] {
   color-scheme: light;
 
   --bg: #f2f6ef;
-  --bg-rgb: 242 246 239;
-  --surface-rgb: 255 255 255;
-  --ink-rgb: 23 33 31;
-  --overlay-rgb: 23 33 31;
+  --bg-rgb: 242, 246, 239;
+  --surface-rgb: 255, 255, 255;
+  --ink-rgb: 23, 33, 31;
+  --overlay-rgb: 23, 33, 31;
 
   --surface-1: #ffffff;
   --surface-2: #f7faf4;
@@ -301,7 +301,7 @@ html[data-theme='gold'] {
   --border-strong: rgba(23, 33, 31, 0.18);
 
   --accent: #c9a227;
-  --accent-rgb: 201 162 39;
+  --accent-rgb: 201, 162, 39;
   --accent-ink: #7a5e12;
   --accent-contrast: #17211f;
   --accent-hover: #d4af37;

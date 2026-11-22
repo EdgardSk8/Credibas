@@ -1,5 +1,6 @@
 import type { InputHTMLAttributes, ReactNode, SelectHTMLAttributes, TextareaHTMLAttributes } from 'react';
-import { useId } from 'react';
+import { useId, useState } from 'react';
+import { Eye, EyeOff } from 'lucide-react';
 
 interface FieldProps {
   label?: string;
@@ -46,6 +47,38 @@ export function Input({ label, hint, error, suffix, fieldClassName, ...rest }: I
             {...rest}
           />
           {suffix && <span className="input-suffix">{suffix}</span>}
+        </div>
+      )}
+    </Field>
+  );
+}
+
+type PasswordInputProps = Omit<InputProps, 'type' | 'suffix'>;
+
+export function PasswordInput({ label, hint, error, fieldClassName, ...rest }: PasswordInputProps) {
+  const [visible, setVisible] = useState(false);
+  const toggleLabel = visible ? 'Ocultar contraseña' : 'Mostrar contraseña';
+  return (
+    <Field label={label} hint={hint} error={error} required={rest.required} className={fieldClassName}>
+      {(id) => (
+        <div className="input-group">
+          <input
+            id={id}
+            className="input"
+            type={visible ? 'text' : 'password'}
+            aria-invalid={error ? 'true' : undefined}
+            {...rest}
+          />
+          <button
+            type="button"
+            className="input-toggle"
+            onClick={() => setVisible((value) => !value)}
+            aria-label={toggleLabel}
+            aria-pressed={visible}
+            title={toggleLabel}
+          >
+            {visible ? <EyeOff size={16} /> : <Eye size={16} />}
+          </button>
         </div>
       )}
     </Field>

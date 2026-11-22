@@ -161,24 +161,39 @@ export function LandingPage() {
               instante y te muestra el total a pagar antes de desembolsar.
             </p>
             <div className="bento-visual">
-              <div className="mini-table">
-                <div className="mini-table-row head">
-                  <span>Cuota</span>
-                  <span>Vence</span>
-                  <span>Estado</span>
-                </div>
-                {[
-                  ['#01 · C$ 4,250.00', '12 nov', 'Pagada'],
-                  ['#02 · C$ 4,250.00', '12 dic', 'Pagada'],
-                  ['#03 · C$ 4,250.00', '12 ene', 'Pendiente'],
-                  ['#04 · C$ 4,250.00', '12 feb', 'Pendiente'],
-                ].map(([cuota, vence, estado], index) => (
-                  <div className="mini-table-row" key={cuota}>
-                    <b>{cuota}</b>
-                    <span>{vence}</span>
-                    <span className={index < 2 ? 'ok' : ''}>{estado}</span>
+              <div className="loan-preview">
+                <div className="loan-preview-head">
+                  <div className="loan-preview-title">
+                    <span className="loan-preview-label">Préstamo personal</span>
+                    <strong className="loan-preview-amount">C$ 16,000.00</strong>
                   </div>
-                ))}
+                  <span className="loan-preview-badge">4 cuotas · mensual</span>
+                </div>
+                <div className="mini-table">
+                  <div className="mini-table-row head">
+                    <span>Cuota</span>
+                    <span>Monto</span>
+                    <span>Vence</span>
+                    <span>Estado</span>
+                  </div>
+                  {[
+                    ['#01', 'C$ 4,250.00', '12 nov', 'Pagada'],
+                    ['#02', 'C$ 4,250.00', '12 dic', 'Pagada'],
+                    ['#03', 'C$ 4,250.00', '12 ene', 'Pendiente'],
+                    ['#04', 'C$ 4,250.00', '12 feb', 'Pendiente'],
+                  ].map(([numero, monto, vence, estado], index) => (
+                    <div className="mini-table-row" key={numero}>
+                      <b>{numero}</b>
+                      <span className="amount">{monto}</span>
+                      <span>{vence}</span>
+                      <span className={index < 2 ? 'status ok' : 'status pending'}>{estado}</span>
+                    </div>
+                  ))}
+                </div>
+                <div className="loan-preview-footer">
+                  <span>Total a pagar</span>
+                  <strong>C$ 17,000.00</strong>
+                </div>
               </div>
             </div>
           </article>

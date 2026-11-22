@@ -6,7 +6,8 @@
 
 - **PBKDF2-SHA256** con WebCrypto: 600.000 iteraciones por defecto, sal de 16 bytes por usuario, clave derivada de 32 bytes. No se implementa criptografía propia.
 - Comparación de hashes en tiempo constante.
-- Contraseña mínima: 10 caracteres con al menos una letra y un número (validado en cliente y servidor).
+- Contraseña mínima: 8 caracteres con al menos una letra y un número (validado en cliente y servidor).
+- Verificación de correo con **código de 6 dígitos** generado con CSPRNG, almacenado solo como hash (`SHA-256(userId:código)`), vigencia de 10 minutos, 5 intentos máximo, cooldown de 60 segundos y 5 envíos por hora. El código nunca se registra en logs ni se devuelve al cliente.
 - **Bloqueo progresivo**: 5 intentos fallidos en 15 minutos bloquean el acceso temporalmente por correo o IP.
 - **Rate limiting** atómico en D1 (`INSERT … ON CONFLICT … RETURNING`) por IP y por identificador.
 
@@ -58,7 +59,7 @@
 - Pagos confirmados no se eliminan: reversión con motivo, responsable, fecha y auditoría.
 - `payment_reversals` tiene índice único por pago.
 - `audit_logs` registra acción, entidad, antes/después, IP y user agent.
-- Los logs de aplicación no incluyen contraseñas, tokens, números de tarjeta ni montos asociados a personas.
+- Los logs de aplicación no incluyen contraseñas, tokens, números de tarjeta ni montos asociados a personas. Excepción: fuera de producción, el proveedor `console` imprime el texto del correo generado para poder probar los enlaces.
 
 ### Secretos
 

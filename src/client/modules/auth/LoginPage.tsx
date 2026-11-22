@@ -2,16 +2,19 @@ import { useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useQueryClient } from '@tanstack/react-query';
 import { AuthShell } from './AuthShell';
-import { Input, Checkbox } from '../../components/ui/Field';
+import { Input, PasswordInput, Checkbox } from '../../components/ui/Field';
+import { TurnstileWidget } from '../../components/ui/Turnstile';
 import { Button } from '../../components/ui/Button';
 import { api, errorMessage } from '../../lib/api';
 import { useToast } from '../../components/ui/Toasts';
+import { usePublicConfig } from '../../hooks/usePublicConfig';
 
 export function LoginPage() {
   const navigate = useNavigate();
   const location = useLocation();
   const queryClient = useQueryClient();
   const toast = useToast();
+  const { turnstileSiteKey } = usePublicConfig();
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -20,6 +23,8 @@ export function LoginPage() {
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [formError, setFormError] = useState<string | null>(null);
   const [needsVerification, setNeedsVerification] = useState(false);
+  const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
+  const [turnstileKey, setTurnstileKey] = useState(0);
 
   const from = (location.state as { from?: string } | null)?.from;
 
@@ -36,10 +41,14 @@ export function LoginPage() {
       setErrors(nextErrors);
       return;
     }
+    if (turnstileSiteKey && !turnstileToken) {
+      setFormError('Completa la verificación anti-bots e intenta de nuevo.');
+      return;
+    }
 
     setLoading(true);
     try {
-      await api.post('/api/auth/login', { email, password });
+      await api.post('/api/auth/login', { email, password, turnstileToken: turnstileToken ?? undefined });
       await queryClient.invalidateQueries({ queryKey: ['me'] });
       toast.success('Bienvenido de nuevo.');
       navigate(from && from.startsWith('/app') ? from : '/app', { replace: true });
@@ -55,6 +64,10 @@ export function LoginPage() {
       }
     } finally {
       setLoading(false);
+      if (turnstileSiteKey) {
+        setTurnstileToken(null);
+        setTurnstileKey((value) => value + 1);
+      }
     }
   };
 
@@ -86,15 +99,14 @@ export function LoginPage() {
           placeholder="tu@negocio.com"
         />
 
-        <Input
+        <PasswordInput
           label="Contraseña"
-          type="password"
           autoComplete="current-password"
           required
           value={password}
           error={errors.password}
           onChange={(event) => setPassword(event.target.value)}
-          placeholder="••••••••••"
+          placeholder="••••••••"
         />
 
         <div className="row-between">
@@ -112,9 +124,13 @@ export function LoginPage() {
           Iniciar sesión
         </Button>
 
+        {turnstileSiteKey && <TurnstileWidget key={turnstileKey} siteKey={turnstileSiteKey} onToken={setTurnstileToken} />}
+
         {needsVerification && (
           <p className="field-hint" style={{ textAlign: 'center' }}>
-            Si no recibiste el correo, inicia sesión de nuevo más tarde o escríbenos a hola@credibas.app.
+            <Link to={`/verificar-correo?email=${encodeURIComponent(email)}`} className="link">
+              Ingresar el código de verificación
+            </Link>
           </p>
         )}
       </form>

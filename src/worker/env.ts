@@ -125,9 +125,14 @@ export interface Env {
 
   /** Secreto para firmar/verificar Turnstile. Sin él, en producción se rechaza el registro. */
   TURNSTILE_SECRET?: string;
+  /** Site key pública de Turnstile; el cliente la lee desde /api/public/config. */
+  TURNSTILE_SITE_KEY?: string;
   RESEND_API_KEY?: string;
   EMAIL_FROM?: string;
   EMAIL_FROM_NAME?: string;
+  /** Relay HTTP de correo (Google Apps Script) cuando EMAIL_PROVIDER=relay. */
+  MAIL_RELAY_URL?: string;
+  MAIL_RELAY_SECRET?: string;
   /** Iteraciones PBKDF2; se sobreescribe en pruebas para acelerarlas. */
   PASSWORD_ITERATIONS?: string;
   /** Clave para webhooks de facturación. */

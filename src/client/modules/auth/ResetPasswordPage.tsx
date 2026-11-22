@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { CheckCircle2 } from 'lucide-react';
 import { AuthShell } from './AuthShell';
-import { Input } from '../../components/ui/Field';
+import { PasswordInput } from '../../components/ui/Field';
 import { Button } from '../../components/ui/Button';
 import { api, errorMessage } from '../../lib/api';
 
@@ -23,8 +23,8 @@ export function ResetPasswordPage() {
       setError('El enlace no incluye un token válido.');
       return;
     }
-    if (password.length < 10 || !/[A-Za-zÁÉÍÓÚÜÑáéíóúüñ]/.test(password) || !/\d/.test(password)) {
-      setError('Usa al menos 10 caracteres con una letra y un número.');
+    if (password.length < 8 || !/[A-Za-zÁÉÍÓÚÜÑáéíóúüñ]/.test(password) || !/\d/.test(password)) {
+      setError('Usa al menos 8 caracteres con una letra y un número.');
       return;
     }
     if (password !== confirm) {
@@ -76,18 +76,16 @@ export function ResetPasswordPage() {
               <span>{error}</span>
             </div>
           )}
-          <Input
+          <PasswordInput
             label="Nueva contraseña"
-            type="password"
             required
             autoComplete="new-password"
             value={password}
             onChange={(event) => setPassword(event.target.value)}
-            hint="Mínimo 10 caracteres, una letra y un número"
+            hint="Mínimo 8 caracteres, una letra y un número"
           />
-          <Input
+          <PasswordInput
             label="Confirmar contraseña"
-            type="password"
             required
             autoComplete="new-password"
             value={confirm}

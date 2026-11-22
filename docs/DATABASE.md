@@ -22,7 +22,8 @@ D1 (SQLite) con migraciones versionadas en `migrations/`. Las migraciones se apl
 | --- | --- |
 | `users` | Cuentas, hash de contraseña (PBKDF2), verificación de correo, flag de administrador de plataforma. |
 | `sessions` | Sesiones activas con hash del token, IP, user agent, organización activa y expiración. |
-| `email_verifications` | Tokens de un solo uso para confirmar correo. |
+| `email_verifications` | Tokens de enlace de un solo uso (histórico; el flujo actual usa códigos). |
+| `email_verification_codes` | Códigos de 6 dígitos hasheados, con expiración, cooldown de reenvío e intentos. |
 | `password_resets` | Tokens de un solo uso para restablecer contraseña. |
 | `login_attempts` | Intentos de acceso para bloqueo progresivo. |
 | `rate_limits` | Ventanas fijas para rate limiting atómico. |
