@@ -4,4 +4,4 @@ Disallow: /app
 Disallow: /admin
 Disallow: /api
 
-Sitemap: https://credibas.app/sitemap.xml
+Sitemap: https://credibas.pages.dev/sitemap.xml

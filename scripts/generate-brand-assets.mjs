@@ -171,11 +171,10 @@ function ogSvg(markDataUri, markWidth, markHeight) {
   <rect width="1200" height="630" fill="url(#glow)"/>
   <rect x="24" y="24" width="1152" height="582" rx="26" fill="none" stroke="url(#fade)" stroke-width="2"/>
   <image href="${markDataUri}" x="80" y="${Math.round((630 - markHeightOnCanvas) / 2)}" width="400" height="${markHeightOnCanvas}" />
-  <line x1="520" y1="214" x2="560" y2="214" stroke="#D4AF37" stroke-width="4" stroke-linecap="round"/>
-  <text x="520" y="322" font-family="Segoe UI, Inter, Arial, sans-serif" font-size="92" font-weight="700" letter-spacing="-3" fill="#F0F4F2">credibas<tspan fill="#D4AF37">.</tspan></text>
-  <text x="522" y="382" font-family="Segoe UI, Inter, Arial, sans-serif" font-size="32" fill="#F0F4F2" fill-opacity="0.78">Controla tus créditos. Domina tus finanzas.</text>
-  <text x="522" y="452" font-family="Segoe UI, Inter, Arial, sans-serif" font-size="22" letter-spacing="4" fill="#D4AF37">GESTIÓN DE CRÉDITOS Y CARTERA</text>
-  <text x="522" y="552" font-family="Segoe UI, Inter, Arial, sans-serif" font-size="24" fill="#F0F4F2" fill-opacity="0.55">credibas.app</text>
+  <line x1="520" y1="250" x2="560" y2="250" stroke="#D4AF37" stroke-width="4" stroke-linecap="round"/>
+  <text x="520" y="358" font-family="Segoe UI, Inter, Arial, sans-serif" font-size="92" font-weight="700" letter-spacing="-3" fill="#F0F4F2">credibas<tspan fill="#D4AF37">.</tspan></text>
+  <text x="522" y="418" font-family="Segoe UI, Inter, Arial, sans-serif" font-size="32" fill="#F0F4F2" fill-opacity="0.78">Controla tus créditos. Domina tus finanzas.</text>
+  <text x="522" y="488" font-family="Segoe UI, Inter, Arial, sans-serif" font-size="22" letter-spacing="4" fill="#D4AF37">GESTIÓN DE CRÉDITOS Y CARTERA</text>
 </svg>`;
 }
 

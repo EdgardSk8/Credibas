@@ -5,10 +5,21 @@
  *  - scripts/vite-plugin-seo.mjs  (genera HTML estático por ruta y sitemap)
  *  - src/client/lib/seo.ts        (actualiza metadatos al navegar en la SPA)
  *
- * Si cambia el dominio, actualiza SITE_URL aquí y en public/robots.txt.
+ * Si cambia el dominio, define `SITE_URL` en el entorno de build (por defecto
+ * https://credibas.pages.dev) y actualiza public/robots.txt.
  */
 
-export const SITE_URL = 'https://credibas.app';
+const DEFAULT_SITE_URL = 'https://credibas.pages.dev';
+
+function resolveSiteUrl() {
+  if (typeof process !== 'undefined' && process.env) {
+    const configured = process.env.SITE_URL || process.env.APP_URL;
+    if (configured) return configured.replace(/\/+$/, '');
+  }
+  return DEFAULT_SITE_URL;
+}
+
+export const SITE_URL = resolveSiteUrl();
 export const SITE_NAME = 'Credibas';
 export const DEFAULT_IMAGE = '/og-image.png';
 export const IMAGE_WIDTH = 1200;
