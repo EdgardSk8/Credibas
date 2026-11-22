@@ -105,7 +105,7 @@ Secretos requeridos en GitHub:
 
 `https://credibas.pages.dev` es el entorno de pruebas conectado al repositorio `EdgardSk8/Credibas`.
 
-- Proyecto Pages: `credibas`, rama de producción: `preview`. Cada push a `preview` reconstruye el sitio; `main` queda reservado para el Worker de producción.
+- Proyecto Pages: `credibas`, rama de producción: `preview`. Cada push a `preview` reconstruye el sitio automáticamente; `main` queda reservado para el Worker de producción.
 - Build: `npm run build`, salida `dist/client`, Node 22.
 - API: `functions/api/[[route]].ts` reutiliza la misma app Hono del Worker.
 - Bindings: D1 `credibas-db` (la base de producción) y R2 `credibas-files`. Pages no soporta Queues ni Cron; `enqueueJob` omite los envíos a cola en ese entorno.
