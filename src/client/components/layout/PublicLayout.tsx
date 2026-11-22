@@ -170,7 +170,7 @@ export function PublicLayout() {
                   <Link to="/privacidad">Política de privacidad</Link>
                 </li>
                 <li>
-                  <a href="mailto:hola@credibas.app">hola@credibas.app</a>
+                  <a href="mailto:tellezsoftware@gmail.com">tellezsoftware@gmail.com</a>
                 </li>
               </ul>
             </div>

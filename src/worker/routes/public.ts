@@ -62,10 +62,10 @@ publicRoutes.post('/contact', async (c) => {
   const limit = await hitRateLimit(db, `contact:${c.get('clientIp')}`, 3, 60 * 60 * 1000, now);
   if (!limit.allowed) throw AppError.tooMany('Ya recibimos tu mensaje. Te respondemos pronto.');
 
-  const to = c.env.EMAIL_FROM ?? 'hola@credibas.app';
+  const to = c.env.EMAIL_FROM ?? 'tellezsoftware@gmail.com';
   await sendEmail(c.env, {
     to,
-    subject: `Contacto desde credibas.app · ${input.name}`,
+    subject: `Contacto desde Credibas · ${input.name}`,
     text: `Nombre: ${input.name}\nCorreo: ${input.email}\nNegocio: ${input.company ?? '-'}\n\n${input.message}`,
     html: `<p><strong>Nombre:</strong> ${input.name}</p><p><strong>Correo:</strong> ${input.email}</p><p><strong>Negocio:</strong> ${input.company ?? '-'}</p><p>${input.message.replace(/\n/g, '<br />')}</p>`,
   });

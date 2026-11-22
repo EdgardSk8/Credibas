@@ -69,8 +69,8 @@ export function ContactPage() {
                 </span>
                 <div>
                   <strong style={{ display: 'block', fontSize: 'var(--text-sm)' }}>Correo</strong>
-                  <a href="mailto:hola@credibas.app" className="link">
-                    hola@credibas.app
+                  <a href="mailto:tellezsoftware@gmail.com" className="link">
+                    tellezsoftware@gmail.com
                   </a>
                 </div>
               </div>

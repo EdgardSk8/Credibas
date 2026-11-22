@@ -67,7 +67,7 @@ const privacySections = [
   },
   {
     title: '8. Contacto',
-    body: 'Para consultas de privacidad escribe a privacidad@credibas.app.',
+    body: 'Para consultas de privacidad escribe a tellezsoftware@gmail.com.',
   },
 ];
 
