@@ -1,8 +1,10 @@
 const encoder = new TextEncoder();
 const PBKDF2_HASH = 'SHA-256';
 const KEY_BITS = 256;
-export const DEFAULT_PASSWORD_ITERATIONS = 600_000;
+export const DEFAULT_PASSWORD_ITERATIONS = 100_000;
 export const MIN_PASSWORD_ITERATIONS = 10_000;
+/** Cloudflare (Workers y Pages Functions) rechaza PBKDF2 por encima de 100.000. */
+export const MAX_PASSWORD_ITERATIONS = 100_000;
 
 function bytesToBase64(bytes: Uint8Array): string {
   let binary = '';
@@ -21,7 +23,7 @@ function base64ToBytes(value: string): Uint8Array<ArrayBuffer> {
 export function resolvePasswordIterations(raw: string | undefined): number {
   const parsed = Number(raw);
   if (!Number.isFinite(parsed) || parsed < MIN_PASSWORD_ITERATIONS) return DEFAULT_PASSWORD_ITERATIONS;
-  return Math.trunc(parsed);
+  return Math.min(Math.trunc(parsed), MAX_PASSWORD_ITERATIONS);
 }
 
 async function deriveBits(password: string, salt: Uint8Array<ArrayBuffer>, iterations: number): Promise<Uint8Array> {

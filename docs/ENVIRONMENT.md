@@ -8,7 +8,7 @@ Crea `.dev.vars` (ignorado por git) a partir de `.dev.vars.example`:
 APP_ENV=development
 APP_URL=http://localhost:5173
 EMAIL_PROVIDER=console
-PASSWORD_ITERATIONS=600000
+PASSWORD_ITERATIONS=100000
 # TURNSTILE_SITE_KEY=1x00000000000000000000AA
 # TURNSTILE_SECRET=1x0000000000000000000000000000000AA
 # RESEND_API_KEY=
@@ -42,7 +42,7 @@ Con `EMAIL_PROVIDER=console`, los correos se imprimen en la consola del servidor
 | `EMAIL_FROM_NAME` | Var | No | Nombre del remitente. |
 | `MAIL_RELAY_URL` | Secret | No | URL `/exec` del relay de Apps Script; requerida si `EMAIL_PROVIDER=relay`. |
 | `MAIL_RELAY_SECRET` | Secret | No | Secreto compartido con el relay; requerido si `EMAIL_PROVIDER=relay`. |
-| `PASSWORD_ITERATIONS` | Var | No | Iteraciones PBKDF2. Por defecto 600.000. En pruebas se baja a 10.000. |
+| `PASSWORD_ITERATIONS` | Var | No | Iteraciones PBKDF2. Por defecto 100.000. En pruebas se baja a 10.000. |
 | `BILLING_WEBHOOK_SECRET` | Secret | No | Secreto HMAC para webhooks de facturación. |
 
 ## Configurar secretos en producción

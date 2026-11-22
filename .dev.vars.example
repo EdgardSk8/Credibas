@@ -7,8 +7,8 @@ APP_NAME=Credibas
 EMAIL_PROVIDER=console
 PAYMENTS_PROVIDER=manual
 
-# Iteraciones PBKDF2. 600000 es el valor recomendado; puedes bajarlo en local.
-PASSWORD_ITERATIONS=600000
+# Iteraciones PBKDF2. 100000 es el valor recomendado; puedes bajarlo en local.
+PASSWORD_ITERATIONS=100000
 
 # Turnstile (obligatorio en producción)
 # TURNSTILE_SITE_KEY=1x00000000000000000000AA
