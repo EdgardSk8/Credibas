@@ -19,6 +19,24 @@ import { Button } from '../../components/ui/Button';
 import { PlanCard } from '../../components/marketing/PlanCard';
 import { usePublicPlans } from '../../hooks/usePlans';
 
+const collectionSeries = [
+  { label: '28 sep', amount: 6850 },
+  { label: '5 oct', amount: 8200 },
+  { label: '12 oct', amount: 7400 },
+  { label: '19 oct', amount: 10150 },
+  { label: '26 oct', amount: 9300 },
+  { label: '2 nov', amount: 12600 },
+  { label: '9 nov', amount: 11450 },
+  { label: '16 nov', amount: 14200 },
+];
+
+const collectionMax = Math.max(...collectionSeries.map((item) => item.amount));
+const collectionTotal = collectionSeries.reduce((sum, item) => sum + item.amount, 0);
+
+function formatCordobas(value: number): string {
+  return `C$ ${value.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+}
+
 const faqs = [
   {
     question: '¿Credibas es un sistema de préstamos o un Excel mejorado?',
@@ -173,19 +191,19 @@ export function LandingPage() {
                   <div className="mini-table-row head">
                     <span>Cuota</span>
                     <span>Monto</span>
-                    <span>Vence</span>
+                    <span>Vencimiento</span>
                     <span>Estado</span>
                   </div>
                   {[
-                    ['#01', 'C$ 4,250.00', '12 nov', 'Pagada'],
-                    ['#02', 'C$ 4,250.00', '12 dic', 'Pagada'],
-                    ['#03', 'C$ 4,250.00', '12 ene', 'Pendiente'],
-                    ['#04', 'C$ 4,250.00', '12 feb', 'Pendiente'],
+                    ['#01', 'C$ 4,250.00', '12 de noviembre de 2026', 'Pagada'],
+                    ['#02', 'C$ 4,250.00', '12 de diciembre de 2026', 'Pagada'],
+                    ['#03', 'C$ 4,250.00', '12 de enero de 2027', 'Pendiente'],
+                    ['#04', 'C$ 4,250.00', '12 de febrero de 2027', 'Pendiente'],
                   ].map(([numero, monto, vence, estado], index) => (
                     <div className="mini-table-row" key={numero}>
                       <b>{numero}</b>
                       <span className="amount">{monto}</span>
-                      <span>{vence}</span>
+                      <span className="due">{vence}</span>
                       <span className={index < 2 ? 'status ok' : 'status pending'}>{estado}</span>
                     </div>
                   ))}
@@ -208,16 +226,26 @@ export function LandingPage() {
               cifras desactualizadas.
             </p>
             <div className="bento-visual">
-              <div className="bars" aria-hidden="true">
-                {[34, 48, 42, 60, 54, 72, 66, 84].map((height, index) => (
-                  <div className="bars-bar" key={index}>
-                    <span style={{ height: `${height}%` }} />
+              <div className="chart-head">
+                <span>Cobranza · últimas 8 semanas</span>
+                <strong>{formatCordobas(collectionTotal)}</strong>
+              </div>
+              <div
+                className="bars"
+                role="img"
+                aria-label={`Cobranza de las últimas 8 semanas: ${collectionSeries
+                  .map((item) => `${item.label}, ${formatCordobas(item.amount)}`)
+                  .join('; ')}. Total ${formatCordobas(collectionTotal)}.`}
+              >
+                {collectionSeries.map((item) => (
+                  <div className="bars-bar" key={item.label} title={`${item.label}: ${formatCordobas(item.amount)}`}>
+                    <span style={{ height: `${Math.round((item.amount / collectionMax) * 92)}%` }} />
                   </div>
                 ))}
               </div>
               <div className="bars-labels">
-                {['L', 'M', 'M', 'J', 'V', 'S', 'D', 'H'].map((label, index) => (
-                  <span key={`${label}-${index}`}>{label}</span>
+                {collectionSeries.map((item) => (
+                  <span key={item.label}>{item.label}</span>
                 ))}
               </div>
             </div>
