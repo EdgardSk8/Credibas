@@ -7,6 +7,7 @@ export interface SeoRoute {
   schema: 'home' | 'pricing' | 'page';
   noindex?: boolean;
   image?: string;
+  imageAlt?: string;
   breadcrumb?: string;
 }
 

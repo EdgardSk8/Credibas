@@ -35,6 +35,8 @@ export const PUBLIC_ROUTES = [
       'Administra préstamos, clientes, cuotas y cobros desde una plataforma diseñada para mantener tu negocio financiero organizado. Prueba gratis 14 días.',
     priority: 1.0,
     changeFrequency: 'weekly',
+    image: '/og/inicio.png?v=1',
+    imageAlt: 'Credibas — controla tus créditos y finanzas',
     schema: 'home',
   },
   {
@@ -44,6 +46,8 @@ export const PUBLIC_ROUTES = [
       'Clientes, préstamos con calendario verificable, cuotas, pagos, cobros, caja y reportes reales en una sola plataforma para tu negocio financiero.',
     priority: 0.9,
     changeFrequency: 'monthly',
+    image: '/og/funcionalidades.png?v=1',
+    imageAlt: 'Funcionalidades de Credibas',
     schema: 'page',
   },
   {
@@ -53,6 +57,8 @@ export const PUBLIC_ROUTES = [
       'Compara los planes Starter, Professional y Business de Credibas. Precios mensuales y anuales con límites claros de usuarios, clientes y cartera.',
     priority: 0.9,
     changeFrequency: 'monthly',
+    image: '/og/precios.png?v=1',
+    imageAlt: 'Planes y precios de Credibas',
     schema: 'pricing',
   },
   {
@@ -62,6 +68,8 @@ export const PUBLIC_ROUTES = [
       'Escríbenos para resolver dudas sobre Credibas, solicitar una demo o revisar la facturación de tu negocio financiero.',
     priority: 0.6,
     changeFrequency: 'monthly',
+    image: '/og/contacto.png?v=1',
+    imageAlt: 'Contacto — Credibas',
     schema: 'page',
   },
   {
@@ -70,6 +78,8 @@ export const PUBLIC_ROUTES = [
     description: 'Condiciones de uso de la plataforma Credibas para la gestión de préstamos, cartera y cobros.',
     priority: 0.3,
     changeFrequency: 'yearly',
+    image: '/og/terminos.png?v=1',
+    imageAlt: 'Términos de servicio — Credibas',
     schema: 'page',
   },
   {
@@ -79,6 +89,8 @@ export const PUBLIC_ROUTES = [
       'Cómo tratamos los datos de tu cuenta, de tu negocio y de los clientes que registras en Credibas.',
     priority: 0.3,
     changeFrequency: 'yearly',
+    image: '/og/privacidad.png?v=1',
+    imageAlt: 'Política de privacidad — Credibas',
     schema: 'page',
   },
   {

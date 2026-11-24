@@ -19,6 +19,7 @@ const escapeHtml = (value) =>
 export function renderSeoBlock(route) {
   const url = absoluteUrl(route.path);
   const image = absoluteUrl(route.image ?? DEFAULT_IMAGE);
+  const imageAlt = route.imageAlt ?? `${SITE_NAME} — Gestión de créditos y cartera`;
   const robots = route.noindex ? 'noindex, nofollow' : 'index, follow, max-image-preview:large';
 
   return `    <title>${escapeHtml(route.title)}</title>
@@ -39,13 +40,13 @@ export function renderSeoBlock(route) {
     <meta property="og:image:type" content="image/png" />
     <meta property="og:image:width" content="${IMAGE_WIDTH}" />
     <meta property="og:image:height" content="${IMAGE_HEIGHT}" />
-    <meta property="og:image:alt" content="${escapeHtml(`${SITE_NAME} — Gestión de créditos y cartera`)}" />
+    <meta property="og:image:alt" content="${escapeHtml(imageAlt)}" />
 
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content="${escapeHtml(route.title)}" />
     <meta name="twitter:description" content="${escapeHtml(route.description)}" />
     <meta name="twitter:image" content="${image}" />
-    <meta name="twitter:image:alt" content="${escapeHtml(`${SITE_NAME} — Gestión de créditos y cartera`)}" />
+    <meta name="twitter:image:alt" content="${escapeHtml(imageAlt)}" />
 
     <script type="application/ld+json">
 ${JSON.stringify(buildJsonLd(route), null, 2)

@@ -81,7 +81,7 @@ export function applySeo(pathname: string): void {
   const url = absoluteUrl(pathname === '/' ? '/' : pathname.replace(/\/+$/, ''));
   const image = absoluteUrl(route?.image ?? DEFAULT_IMAGE);
   const robots = route?.noindex || isPrivate || isUnknown ? 'noindex, nofollow' : 'index, follow, max-image-preview:large';
-  const imageAlt = `${SITE_NAME} — Gestión de créditos y cartera`;
+  const imageAlt = route?.imageAlt ?? `${SITE_NAME} — Gestión de créditos y cartera`;
 
   document.title = title;
   setMeta('name', 'description', description);
