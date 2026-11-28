@@ -7,13 +7,12 @@ import { StatusBadge } from '../../components/ui/Badge';
 import { LoadingBlock } from '../../components/ui/EmptyState';
 import { Modal } from '../../components/ui/Modal';
 import { api, errorMessage } from '../../lib/api';
-import { dateShort, money } from '../../lib/format';
+import { dateShort, daysUntil, money } from '../../lib/format';
 import { subscriptionStatus } from '../../lib/status';
 import { useAuth } from '../../hooks/useAuth';
-import { usePublicPlans } from '../../hooks/usePlans';
 import { useToast } from '../../components/ui/Toasts';
 import { PERMISSIONS } from '@shared/rbac';
-import type { SubscriptionSummary, UsageSummary } from '@shared/types';
+import type { PlanSummary, SubscriptionRequestSummary, SubscriptionSummary, UsageSummary } from '@shared/types';
 
 interface InvoiceItem {
   id: string;
@@ -25,6 +24,61 @@ interface InvoiceItem {
   dueAt: string;
   paidAt: string | null;
   notes: string | null;
+}
+
+interface UpcomingCharge {
+  nextChargeAt: string;
+  graceEndsAt: string | null;
+  status: string;
+  billingCycle: 'monthly' | 'yearly';
+  amountCents: number;
+  currency: 'USD' | 'NIO';
+  autoCharge: boolean;
+  provider: string;
+}
+
+interface PaymentMethodItem {
+  id: string;
+  provider: string;
+  brand: string | null;
+  last4: string | null;
+  expMonth: number | null;
+  expYear: number | null;
+  holderName: string | null;
+  status: string;
+  isDefault: boolean;
+  authorizedAt: string | null;
+}
+
+const TOLERANCE_DAYS = 3;
+
+type DaysTone = 'ok' | 'soon' | 'late' | 'muted';
+
+function billingDays(end: string): { tone: DaysTone; label: string; hint: string | null } {
+  const days = daysUntil(end);
+  if (days === null) return { tone: 'muted', label: '—', hint: null };
+
+  const tone: DaysTone = days > 5 ? 'ok' : days > 1 ? 'soon' : 'late';
+  const label =
+    days > 1
+      ? `${days} días`
+      : days === 1
+        ? '1 día'
+        : days === 0
+          ? 'Vence hoy'
+          : `Vencido hace ${Math.abs(days)} ${Math.abs(days) === 1 ? 'día' : 'días'}`;
+
+  const toleranceLeft = Math.max(0, TOLERANCE_DAYS + days);
+  const hint =
+    days < 0
+      ? toleranceLeft > 0
+        ? `Tolerancia: ${toleranceLeft === 1 ? 'queda' : 'quedan'} ${toleranceLeft} de ${TOLERANCE_DAYS} días`
+        : `Período de tolerancia finalizado (${TOLERANCE_DAYS} días)`
+      : tone === 'late'
+        ? `Incluye ${TOLERANCE_DAYS} días de tolerancia.`
+        : null;
+
+  return { tone, label, hint };
 }
 
 function UsageRow({ usage }: { usage: UsageSummary }) {
@@ -48,10 +102,9 @@ export function SubscriptionPage() {
   const { hasPermission } = useAuth();
   const queryClient = useQueryClient();
   const toast = useToast();
-  const { plans } = usePublicPlans();
 
   const [cycle, setCycle] = useState<'monthly' | 'yearly'>('monthly');
-  const [confirmPlan, setConfirmPlan] = useState<string | null>(null);
+  const [confirmPlan, setConfirmPlan] = useState<PlanSummary | null>(null);
   const [saving, setSaving] = useState(false);
 
   const subscriptionQuery = useQuery({
@@ -59,21 +112,64 @@ export function SubscriptionPage() {
     queryFn: () => api.get<{ subscription: SubscriptionSummary }>('/api/subscriptions/current'),
   });
 
+  const plansQuery = useQuery({
+    queryKey: ['subscription-plans'],
+    queryFn: () => api.get<{ items: PlanSummary[] }>('/api/subscriptions/plans'),
+  });
+
+  const requestsQuery = useQuery({
+    queryKey: ['subscription-requests'],
+    queryFn: () =>
+      api.get<{ freePlanUsed: boolean; pending: SubscriptionRequestSummary | null }>('/api/subscriptions/requests'),
+  });
+
   const invoicesQuery = useQuery({
     queryKey: ['invoices'],
     queryFn: () => api.get<{ items: InvoiceItem[] }>('/api/subscriptions/invoices'),
   });
 
-  const subscription = subscriptionQuery.data?.subscription;
+  const upcomingQuery = useQuery({
+    queryKey: ['subscription-upcoming'],
+    queryFn: () => api.get<UpcomingCharge>('/api/subscriptions/upcoming'),
+  });
 
-  const changePlan = async () => {
+  const methodQuery = useQuery({
+    queryKey: ['subscription-payment-method'],
+    queryFn: () =>
+      api.get<{ items: PaymentMethodItem[]; provider: string; autoChargeAvailable: boolean }>(
+        '/api/subscriptions/payment-method',
+      ),
+  });
+
+  const subscription = subscriptionQuery.data?.subscription;
+  const plans = plansQuery.data?.items ?? [];
+  const freePlan = plans.find((plan) => plan.priceMonthlyCents === 0 && plan.priceYearlyCents === 0) ?? null;
+  const paidPlans = plans.filter((plan) => plan.priceMonthlyCents > 0 || plan.priceYearlyCents > 0);
+  const pendingRequest = requestsQuery.data?.pending ?? null;
+  const freePlanUsed = subscription?.freePlanUsed ?? requestsQuery.data?.freePlanUsed ?? false;
+
+  const requestPlan = async () => {
     if (!confirmPlan) return;
     setSaving(true);
     try {
-      await api.post('/api/subscriptions/change-plan', { planKey: confirmPlan, billingCycle: cycle });
-      toast.success('Plan actualizado.');
+      await api.post('/api/subscriptions/request', { planKey: confirmPlan.key, billingCycle: cycle });
+      toast.success('Solicitud enviada. El administrador verificará tu pago.');
       setConfirmPlan(null);
+      await queryClient.invalidateQueries({ queryKey: ['subscription-requests'] });
+    } catch (error) {
+      toast.error(errorMessage(error));
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const startFree = async () => {
+    setSaving(true);
+    try {
+      await api.post('/api/subscriptions/start-free');
+      toast.success('Plan gratuito activado.');
       await queryClient.invalidateQueries({ queryKey: ['subscription'] });
+      await queryClient.invalidateQueries({ queryKey: ['subscription-requests'] });
       await queryClient.invalidateQueries({ queryKey: ['me'] });
     } catch (error) {
       toast.error(errorMessage(error));
@@ -108,6 +204,20 @@ export function SubscriptionPage() {
     }
   };
 
+  const revokeMethod = async (id: string) => {
+    setSaving(true);
+    try {
+      await api.delete(`/api/subscriptions/payment-method/${id}`);
+      toast.success('Método de pago eliminado.');
+      await queryClient.invalidateQueries({ queryKey: ['subscription-payment-method'] });
+      await queryClient.invalidateQueries({ queryKey: ['subscription-upcoming'] });
+    } catch (error) {
+      toast.error(errorMessage(error));
+    } finally {
+      setSaving(false);
+    }
+  };
+
   if (subscriptionQuery.isLoading) return <LoadingBlock label="Cargando suscripción…" />;
   if (subscriptionQuery.isError || !subscription) {
     return (
@@ -116,6 +226,8 @@ export function SubscriptionPage() {
       </div>
     );
   }
+
+  const billing = billingDays(subscription.currentPeriodEnd);
 
   return (
     <>
@@ -160,10 +272,24 @@ export function SubscriptionPage() {
                     {dateShort(subscription.currentPeriodStart)} — {dateShort(subscription.currentPeriodEnd)}
                   </strong>
                 </div>
+                <div className="meta-row">
+                  <span>Días restantes</span>
+                  <strong className={`days-left days-left--${billing.tone}`}>{billing.label}</strong>
+                </div>
+                {billing.hint && <p className="days-left-hint">{billing.hint}</p>}
                 {subscription.trialEndsAt && (
                   <div className="meta-row">
                     <span>Prueba termina</span>
                     <strong>{dateShort(subscription.trialEndsAt)}</strong>
+                  </div>
+                )}
+                {upcomingQuery.data && (
+                  <div className="meta-row">
+                    <span>Próximo cobro</span>
+                    <strong>
+                      {money(upcomingQuery.data.amountCents, upcomingQuery.data.currency)} ·{' '}
+                      {dateShort(upcomingQuery.data.nextChargeAt)}
+                    </strong>
                   </div>
                 )}
                 <div className="meta-row">
@@ -188,6 +314,49 @@ export function SubscriptionPage() {
                 )}
               </div>
             </div>
+          </section>
+
+          <section className="card">
+            <div className="card-header">
+              <div>
+                <div className="card-title">
+                  <span className="icon-chip">
+                    <CreditCard size={13} />
+                  </span>
+                  Método de pago
+                </div>
+                <div className="card-subtitle">
+                  {methodQuery.data?.autoChargeAvailable
+                    ? 'Cobro automático con tarjeta habilitado por el banco.'
+                    : 'Cobro automático con tarjeta no disponible todavía: pagas por transferencia y el administrador confirma el pago.'}
+                </div>
+              </div>
+            </div>
+
+            {(methodQuery.data?.items.length ?? 0) === 0 ? (
+              <p className="field-hint">Sin tarjeta registrada.</p>
+            ) : (
+              <div className="dashboard-stack" style={{ gap: '0.5rem' }}>
+                {methodQuery.data?.items.map((method) => (
+                  <div key={method.id} className="meta-row">
+                    <span>
+                      {method.brand ? method.brand.toUpperCase() : 'Tarjeta'} ···· {method.last4 ?? '····'}
+                      {method.expMonth && method.expYear
+                        ? ` · vence ${String(method.expMonth).padStart(2, '0')}/${method.expYear}`
+                        : ''}
+                    </span>
+                    <strong>
+                      {method.status === 'active' ? 'Activa' : method.status === 'revoked' ? 'Revocada' : method.status}
+                      {method.status === 'active' && hasPermission(PERMISSIONS.billingManage) && (
+                        <Button variant="ghost" onClick={() => revokeMethod(method.id)} loading={saving}>
+                          Quitar
+                        </Button>
+                      )}
+                    </strong>
+                  </div>
+                ))}
+              </div>
+            )}
           </section>
 
           <section className="card">
@@ -259,9 +428,9 @@ export function SubscriptionPage() {
                   <span className="icon-chip">
                     <ArrowUpRight size={13} />
                   </span>
-                  Cambiar plan
+                  Solicitar cambio de plan
                 </div>
-                <div className="card-subtitle">Los cambios de límites se aplican al instante.</div>
+                <div className="card-subtitle">El administrador activa el plan cuando confirme tu pago.</div>
               </div>
             </div>
 
@@ -274,8 +443,51 @@ export function SubscriptionPage() {
               </button>
             </div>
 
+            {pendingRequest && (
+              <div className="alert alert-warning" style={{ marginBottom: 'var(--space-4)' }}>
+                <div>
+                  <span className="alert-title">Solicitud pendiente</span>
+                  <p className="field-hint">
+                    {pendingRequest.planName} · {pendingRequest.billingCycle === 'yearly' ? 'anual' : 'mensual'}. El
+                    administrador verificará tu pago antes de activarlo.
+                  </p>
+                </div>
+              </div>
+            )}
+
             <div className="stack" style={{ gap: '0.6rem' }}>
-              {plans.map((plan) => (
+              {freePlan && (
+                <div className="panel" style={{ display: 'grid', gap: '0.35rem' }}>
+                  <div className="row-between">
+                    <strong style={{ fontSize: 14 }}>{freePlan.name}</strong>
+                    <span className="numeric" style={{ fontSize: 13 }}>
+                      Gratis
+                      <span style={{ color: 'var(--text-faint)' }}> · {freePlan.trialDays} días</span>
+                    </span>
+                  </div>
+                  <p className="field-hint">{freePlan.description}</p>
+                  {subscription.plan.key === freePlan.key ? (
+                    <Button variant="ghost" size="sm" disabled>
+                      Plan actual
+                    </Button>
+                  ) : freePlanUsed ? (
+                    <Button variant="ghost" size="sm" disabled>
+                      Ya utilizado
+                    </Button>
+                  ) : (
+                    <Button
+                      variant="secondary"
+                      size="sm"
+                      disabled={!hasPermission(PERMISSIONS.billingManage) || saving}
+                      onClick={startFree}
+                    >
+                      Comenzar gratis
+                    </Button>
+                  )}
+                </div>
+              )}
+
+              {paidPlans.map((plan) => (
                 <div
                   key={plan.id}
                   className={`panel ${plan.key === subscription.plan.key ? 'is-featured' : ''}`}
@@ -297,10 +509,10 @@ export function SubscriptionPage() {
                     <Button
                       variant="secondary"
                       size="sm"
-                      disabled={!hasPermission(PERMISSIONS.billingManage)}
-                      onClick={() => setConfirmPlan(plan.key)}
+                      disabled={!hasPermission(PERMISSIONS.billingManage) || Boolean(pendingRequest)}
+                      onClick={() => setConfirmPlan(plan)}
                     >
-                      Cambiar a {plan.name}
+                      {pendingRequest ? 'Solicitud pendiente' : `Solicitar ${plan.name}`}
                     </Button>
                   )}
                 </div>
@@ -308,8 +520,8 @@ export function SubscriptionPage() {
             </div>
 
             <p className="field-hint" style={{ marginTop: 'var(--space-3)' }}>
-              Los planes de pago requieren confirmación de pago. Mientras tanto, el cambio queda registrado y la
-              suscripción conserva su estado actual.
+              Los planes de pago se activan solo cuando el administrador confirma el pago. No se realiza ningún cobro
+              automático.
             </p>
           </section>
         </div>
@@ -318,23 +530,39 @@ export function SubscriptionPage() {
       <Modal
         open={Boolean(confirmPlan)}
         onClose={() => setConfirmPlan(null)}
-        title="Cambiar de plan"
-        subtitle={`Plan ${confirmPlan ?? ''} · ${cycle === 'yearly' ? 'anual' : 'mensual'}`}
+        title="Solicitar cambio de plan"
+        subtitle={confirmPlan ? `${confirmPlan.name} · ${cycle === 'yearly' ? 'anual' : 'mensual'}` : undefined}
         footer={
           <>
             <Button variant="ghost" onClick={() => setConfirmPlan(null)}>
               Cancelar
             </Button>
-            <Button variant="primary" onClick={changePlan} loading={saving}>
-              Confirmar cambio
+            <Button variant="primary" onClick={requestPlan} loading={saving}>
+              Enviar solicitud
             </Button>
           </>
         }
       >
         <p className="text-muted" style={{ fontSize: 'var(--text-sm)' }}>
-          El nuevo plan reemplazará los límites actuales. Si eliges un plan de pago, la activación definitiva ocurre
-          cuando el equipo confirme el pago; tus datos nunca se eliminan por cambiar de plan.
+          Enviaremos tu solicitud al administrador. El plan se activa cuando confirme el pago; no se realiza ningún
+          cobro automático ni cambian tus límites antes de la aprobación.
         </p>
+        {confirmPlan && (
+          <div className="detail-meta" style={{ marginTop: 'var(--space-4)' }}>
+            <div className="meta-row">
+              <span>Plan</span>
+              <strong>{confirmPlan.name}</strong>
+            </div>
+            <div className="meta-row">
+              <span>Ciclo</span>
+              <strong>{cycle === 'yearly' ? 'Anual' : 'Mensual'}</strong>
+            </div>
+            <div className="meta-row">
+              <span>Monto</span>
+              <strong>{money(cycle === 'yearly' ? confirmPlan.priceYearlyCents : confirmPlan.priceMonthlyCents, 'USD')}</strong>
+            </div>
+          </div>
+        )}
       </Modal>
     </>
   );

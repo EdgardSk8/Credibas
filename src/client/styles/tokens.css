@@ -49,6 +49,8 @@
   --accent-softer: rgba(var(--accent-rgb), 0.05);
 
   /* Estados funcionales (no forman parte de la identidad de marca) */
+  --success: #35d6a0;
+  --success-soft: rgba(53, 214, 160, 0.12);
   --danger: #e86a5f;
   --danger-soft: rgba(232, 106, 95, 0.12);
   --warning: #e2b65c;
@@ -61,16 +63,16 @@
   --font-sans: 'Manrope Variable', 'Manrope', system-ui, -apple-system, 'Segoe UI', sans-serif;
   --font-mono: 'SFMono-Regular', ui-monospace, 'Cascadia Code', monospace;
 
-  --text-xs: 0.6875rem;
-  --text-sm: 0.75rem;
-  --text-base: 0.875rem;
-  --text-md: 0.9375rem;
-  --text-lg: 1.0625rem;
-  --text-xl: 1.25rem;
-  --text-2xl: 1.5rem;
-  --text-3xl: 1.9rem;
-  --text-4xl: clamp(2.1rem, 3.6vw, 3rem);
-  --text-hero: clamp(2.4rem, 5vw, 4rem);
+  --text-xs: 0.8125rem;
+  --text-sm: 0.875rem;
+  --text-base: 1rem;
+  --text-md: 1.0625rem;
+  --text-lg: 1.1875rem;
+  --text-xl: 1.375rem;
+  --text-2xl: 1.625rem;
+  --text-3xl: 2.025rem;
+  --text-4xl: clamp(2.225rem, calc(3.6vw + 2px), 3.125rem);
+  --text-hero: clamp(2.675rem, calc(5.4vw + 2px), 4.125rem);
 
   /* Espaciado */
   --space-1: 0.25rem;

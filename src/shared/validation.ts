@@ -211,9 +211,74 @@ export const organizationSettingsSchema = z.object({
   paymentMethods: z.array(z.enum(['cash', 'transfer', 'card', 'other'])).min(1).optional(),
 });
 
-export const changePlanSchema = z.object({
+export const subscriptionRequestSchema = z.object({
   planKey: z.string().min(1).max(40),
   billingCycle: z.enum(['monthly', 'yearly']).default('monthly'),
+  note: optionalText(300),
+});
+
+export const subscriptionRequestResolutionSchema = z.object({
+  note: optionalText(500),
+});
+
+export const subscriptionQuoteSchema = z.object({
+  planKey: z.string().trim().min(1).max(40),
+  billingCycle: z.enum(['monthly', 'yearly']).default('monthly'),
+  moduleKeys: z.array(z.string().trim().min(1).max(40)).max(20).default([]),
+  addons: z
+    .array(
+      z.object({
+        key: z.string().trim().min(1).max(40),
+        quantity: z.number().int().min(1).max(100),
+      }),
+    )
+    .max(20)
+    .default([]),
+});
+
+export const moduleCatalogSchema = z.object({
+  key: z.string().trim().regex(/^[a-z0-9_]+$/, 'Solo minúsculas, números y guion bajo').min(2).max(40),
+  name: z.string().trim().min(2).max(80),
+  description: optionalText(240),
+  priceMonthlyCents: z.number().int().min(0),
+  priceYearlyCents: z.number().int().min(0),
+  isCore: z.boolean().default(false),
+  isActive: z.boolean().default(true),
+  sortOrder: z.number().int().min(0).max(999).default(0),
+  features: z.array(z.string().trim().min(1).max(120)).max(12).default([]),
+  dependencyKeys: z.array(z.string().trim().min(1).max(40)).max(10).default([]),
+  planKeys: z.array(z.string().trim().min(1).max(40)).max(10).default([]),
+});
+
+export const addonCatalogSchema = z.object({
+  key: z.string().trim().regex(/^[a-z0-9_]+$/, 'Solo minúsculas, números y guion bajo').min(2).max(40),
+  name: z.string().trim().min(2).max(80),
+  description: optionalText(240),
+  metric: z.enum([
+    'users',
+    'clients',
+    'active_loans',
+    'storage_mb',
+    'collectors',
+    'branches',
+    'exports_per_month',
+    'history_days',
+  ]),
+  unitAmount: z.number().int().positive().max(1_000_000),
+  unitLabel: z.string().trim().min(1).max(40),
+  priceMonthlyCents: z.number().int().min(0),
+  priceYearlyCents: z.number().int().min(0),
+  isActive: z.boolean().default(true),
+  sortOrder: z.number().int().min(0).max(999).default(0),
+  plans: z
+    .array(
+      z.object({
+        planKey: z.string().trim().min(1).max(40),
+        maxQuantity: z.number().int().min(0).max(100),
+      }),
+    )
+    .max(10)
+    .default([]),
 });
 
 export const confirmBillingPaymentSchema = z.object({

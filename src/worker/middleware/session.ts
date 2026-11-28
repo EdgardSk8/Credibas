@@ -33,6 +33,7 @@ export const sessionMiddleware = createMiddleware<AppEnv>(async (c, next) => {
       c.set('userFullName', session.full_name);
       c.set('emailVerified', session.email_verified_at !== null);
       c.set('isPlatformAdmin', session.is_platform_admin === 1);
+      c.set('isDemo', session.is_demo === 1);
 
       if (now - session.last_used_at > TOUCH_INTERVAL_MS) {
         await touchSession(db, session.id, now);

@@ -28,6 +28,7 @@ export interface SubscriptionRow {
   trial_ends_at: number | null;
   current_period_start: number;
   current_period_end: number;
+  grace_ends_at: number | null;
   cancel_at_period_end: number;
   canceled_at: number | null;
   created_at: number;
@@ -72,7 +73,7 @@ export interface SubscriptionWithPlan extends SubscriptionRow {
 export async function getSubscription(db: Db, orgId: string): Promise<SubscriptionWithPlan | null> {
   const subscription = await db.first<SubscriptionRow>(
     `SELECT id, org_id, plan_id, status, billing_cycle, trial_ends_at, current_period_start, current_period_end,
-            cancel_at_period_end, canceled_at, created_at, updated_at
+            grace_ends_at, cancel_at_period_end, canceled_at, created_at, updated_at
        FROM subscriptions WHERE org_id = ?`,
     [orgId],
   );
@@ -112,16 +113,32 @@ export async function getOrgUsage(db: Db, orgId: string): Promise<OrgUsage> {
 
 export async function changeSubscriptionPlan(
   db: Db,
-  input: { orgId: string; planId: string; billingCycle: 'monthly' | 'yearly'; status?: SubscriptionRow['status'] },
+  input: {
+    orgId: string;
+    planId: string;
+    billingCycle: 'monthly' | 'yearly';
+    status?: SubscriptionRow['status'];
+    graceDays?: number;
+  },
   now: number,
 ): Promise<void> {
   const periodMs = input.billingCycle === 'yearly' ? 365 * 24 * 60 * 60 * 1000 : 30 * 24 * 60 * 60 * 1000;
+  const periodEnd = now + periodMs;
   await db.run(
     `UPDATE subscriptions
         SET plan_id = ?, billing_cycle = ?, status = COALESCE(?, status), current_period_start = ?,
-            current_period_end = ?, cancel_at_period_end = 0, canceled_at = NULL, updated_at = ?
+            current_period_end = ?, grace_ends_at = ?, cancel_at_period_end = 0, canceled_at = NULL, updated_at = ?
       WHERE org_id = ?`,
-    [input.planId, input.billingCycle, input.status ?? null, now, now + periodMs, now, input.orgId],
+    [
+      input.planId,
+      input.billingCycle,
+      input.status ?? null,
+      now,
+      periodEnd,
+      periodEnd + Math.max(0, input.graceDays ?? 0) * DAY_MS,
+      now,
+      input.orgId,
+    ],
   );
 }
 
@@ -207,12 +224,24 @@ export async function listInvoices(db: Db, orgId: string): Promise<InvoiceRow[]>
 
 export async function createInvoice(
   db: Db,
-  input: { orgId: string; subscriptionId: string | null; amountCents: number; currency: string; dueInDays: number; notes: string | null },
+  input: {
+    orgId: string;
+    subscriptionId: string | null;
+    amountCents: number;
+    currency: string;
+    dueInDays: number;
+    notes: string | null;
+    /** Período facturado; por defecto 30 días desde ahora. */
+    periodStart?: number;
+    periodEnd?: number;
+  },
   now: number,
 ): Promise<string> {
   const id = newId('inv');
   const stamp = new Date(now).toISOString().slice(0, 10).replace(/-/g, '');
   const number = `CRB-${stamp}-${Math.random().toString(36).slice(2, 8).toUpperCase()}`;
+  const periodStart = input.periodStart ?? now;
+  const periodEnd = input.periodEnd ?? now + 30 * 24 * 60 * 60 * 1000;
   await db.run(
     `INSERT INTO invoices (id, org_id, subscription_id, number, amount_cents, currency, status, period_start,
        period_end, issued_at, due_at, paid_at, notes, created_at)
@@ -224,8 +253,8 @@ export async function createInvoice(
       number,
       input.amountCents,
       input.currency,
-      now,
-      now + 30 * 24 * 60 * 60 * 1000,
+      periodStart,
+      periodEnd,
       now,
       now + input.dueInDays * 24 * 60 * 60 * 1000,
       input.notes,
@@ -233,6 +262,22 @@ export async function createInvoice(
     ],
   );
   return id;
+}
+
+/** Factura no anulada de un período concreto (base de la idempotencia por período). */
+export async function findInvoiceForPeriod(
+  db: Db,
+  subscriptionId: string,
+  periodStart: number,
+): Promise<InvoiceRow | null> {
+  return db.first<InvoiceRow>(
+    `SELECT id, org_id, subscription_id, number, amount_cents, currency, status, period_start, period_end,
+            issued_at, due_at, paid_at, notes, created_at
+       FROM invoices
+      WHERE subscription_id = ? AND period_start = ? AND status != 'void'
+      ORDER BY created_at DESC LIMIT 1`,
+    [subscriptionId, periodStart],
+  );
 }
 
 export async function getInvoice(db: Db, orgId: string, invoiceId: string): Promise<InvoiceRow | null> {
@@ -358,16 +403,25 @@ export async function listPendingBillingPayments(db: Db): Promise<Array<BillingP
 
 export async function activateSubscriptionForPeriod(
   db: Db,
-  input: { orgId: string; planId: string; billingCycle: 'monthly' | 'yearly' },
+  input: {
+    orgId: string;
+    planId: string;
+    billingCycle: 'monthly' | 'yearly';
+    graceDays?: number;
+    /** Inicio del período; se usa al cobrar por adelantado para no desviar el ciclo. */
+    periodStart?: number;
+  },
   now: number,
 ): Promise<void> {
   const periodMs = input.billingCycle === 'yearly' ? 365 * 24 * 60 * 60 * 1000 : 30 * 24 * 60 * 60 * 1000;
+  const periodStart = input.periodStart ?? now;
+  const periodEnd = periodStart + periodMs;
   await db.run(
     `UPDATE subscriptions
         SET plan_id = ?, billing_cycle = ?, status = 'active', current_period_start = ?, current_period_end = ?,
-            cancel_at_period_end = 0, canceled_at = NULL, updated_at = ?
+            grace_ends_at = ?, cancel_at_period_end = 0, canceled_at = NULL, updated_at = ?
       WHERE org_id = ?`,
-    [input.planId, input.billingCycle, now, now + periodMs, now, input.orgId],
+    [input.planId, input.billingCycle, periodStart, periodEnd, periodEnd + Math.max(0, input.graceDays ?? 0) * DAY_MS, now, input.orgId],
   );
 }
 
@@ -376,8 +430,122 @@ export async function refreshExpiredSubscriptions(db: Db, now: number): Promise<
   const result = await db.run(
     `UPDATE subscriptions
         SET status = 'expired', updated_at = ?
-      WHERE status IN ('trialing', 'active') AND current_period_end < ?`,
+      WHERE status IN ('trialing', 'active', 'past_due') AND COALESCE(grace_ends_at, current_period_end) < ?`,
     [now, now],
   );
   return result.meta.changes ?? 0;
+}
+
+const DAY_MS = 24 * 60 * 60 * 1000;
+
+export async function listActivePlans(db: Db): Promise<PlanRow[]> {
+  return db.all<PlanRow>(`SELECT ${PLAN_COLUMNS} FROM plans WHERE is_active = 1 ORDER BY sort_order ASC`);
+}
+
+export interface SubscriptionRequestRow {
+  id: string;
+  org_id: string;
+  requested_by: string;
+  plan_id: string;
+  billing_cycle: 'monthly' | 'yearly';
+  status: 'pending' | 'approved' | 'rejected' | 'canceled';
+  note: string | null;
+  admin_note: string | null;
+  created_at: number;
+  resolved_at: number | null;
+  resolved_by: string | null;
+}
+
+export interface SubscriptionRequestView extends SubscriptionRequestRow {
+  org_name: string;
+  plan_key: string;
+  plan_name: string;
+  price_monthly_cents: number;
+  price_yearly_cents: number;
+  currency: string;
+  requester_email: string;
+}
+
+const REQUEST_SELECT = `SELECT r.id, r.org_id, r.requested_by, r.plan_id, r.billing_cycle, r.status, r.note,
+        r.admin_note, r.created_at, r.resolved_at, r.resolved_by,
+        o.name AS org_name, p.key AS plan_key, p.name AS plan_name,
+        p.price_monthly_cents, p.price_yearly_cents, p.currency,
+        u.email AS requester_email
+   FROM subscription_requests r
+   JOIN organizations o ON o.id = r.org_id
+   JOIN plans p ON p.id = r.plan_id
+   JOIN users u ON u.id = r.requested_by`;
+
+export async function getPendingSubscriptionRequest(db: Db, orgId: string): Promise<SubscriptionRequestView | null> {
+  return db.first<SubscriptionRequestView>(`${REQUEST_SELECT} WHERE r.org_id = ? AND r.status = 'pending'`, [orgId]);
+}
+
+export async function listSubscriptionRequests(db: Db, status: string = 'pending'): Promise<SubscriptionRequestView[]> {
+  return db.all<SubscriptionRequestView>(
+    `${REQUEST_SELECT} WHERE r.status = ? ORDER BY r.created_at ASC LIMIT 200`,
+    [status],
+  );
+}
+
+export async function getSubscriptionRequestById(db: Db, id: string): Promise<SubscriptionRequestView | null> {
+  return db.first<SubscriptionRequestView>(`${REQUEST_SELECT} WHERE r.id = ?`, [id]);
+}
+
+export async function createSubscriptionRequest(
+  db: Db,
+  input: { orgId: string; requestedBy: string; planId: string; billingCycle: 'monthly' | 'yearly'; note?: string | null },
+  now: number,
+): Promise<string> {
+  const id = newId('sreq');
+  await db.run(
+    `INSERT INTO subscription_requests (id, org_id, requested_by, plan_id, billing_cycle, status, note, created_at)
+     VALUES (?, ?, ?, ?, ?, 'pending', ?, ?)`,
+    [id, input.orgId, input.requestedBy, input.planId, input.billingCycle, input.note ?? null, now],
+  );
+  return id;
+}
+
+export async function resolveSubscriptionRequest(
+  db: Db,
+  input: { id: string; status: 'approved' | 'rejected' | 'canceled'; adminNote?: string | null; resolvedBy: string },
+  now: number,
+): Promise<void> {
+  await db.run(
+    `UPDATE subscription_requests
+        SET status = ?, admin_note = ?, resolved_at = ?, resolved_by = ?
+      WHERE id = ? AND status = 'pending'`,
+    [input.status, input.adminNote ?? null, now, input.resolvedBy, input.id],
+  );
+}
+
+export async function hasUsedFreePlan(db: Db, orgId: string): Promise<boolean> {
+  const row = await db.first<{ free_plan_used_at: number | null }>(
+    `SELECT free_plan_used_at FROM organizations WHERE id = ?`,
+    [orgId],
+  );
+  return Boolean(row?.free_plan_used_at);
+}
+
+/** Activa el plan gratuito una sola vez y marca la organización como usuaria. */
+export async function startFreeSubscription(
+  db: Db,
+  input: { orgId: string; planId: string; days: number; graceDays?: number },
+  now: number,
+): Promise<void> {
+  const periodEnd = now + Math.max(1, input.days) * DAY_MS;
+  const graceEnd = periodEnd + Math.max(0, input.graceDays ?? 0) * DAY_MS;
+  await db.batch([
+    {
+      sql: `UPDATE subscriptions
+               SET plan_id = ?, billing_cycle = 'monthly', status = 'active', trial_ends_at = ?,
+                   current_period_start = ?, current_period_end = ?, grace_ends_at = ?, cancel_at_period_end = 0,
+                   canceled_at = NULL, updated_at = ?
+             WHERE org_id = ?`,
+      params: [input.planId, periodEnd, now, periodEnd, graceEnd, now, input.orgId],
+    },
+    {
+      sql: `UPDATE organizations SET free_plan_used_at = ?, updated_at = ? WHERE id = ?`,
+      params: [now, now, input.orgId],
+    },
+  ]);
 }

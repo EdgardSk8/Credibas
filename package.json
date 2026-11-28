@@ -21,6 +21,7 @@
     "db:migrate:remote": "wrangler d1 migrations apply credibas-db --remote",
     "db:seed:local": "wrangler d1 execute credibas-db --local --file=./seeds/dev.sql",
     "db:seed:demo": "wrangler d1 execute credibas-db --local --file=./seeds/demo.sql",
+    "db:seed:build": "node scripts/generate-demo-seed.mjs",
     "cf-typegen": "wrangler types"
   },
   "dependencies": {

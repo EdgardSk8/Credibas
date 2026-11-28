@@ -348,6 +348,17 @@ export function AppLayout() {
           </div>
         </header>
 
+        {me?.isDemo && (
+          <div className="demo-banner" role="status">
+            <span>
+              Estás explorando la demo de <strong>Financiera Demo</strong> en modo solo lectura.
+            </span>
+            <Link to="/registro" className="demo-banner-link">
+              Crear mi cuenta
+            </Link>
+          </div>
+        )}
+
         <main className="app-content">
           <Outlet />
         </main>

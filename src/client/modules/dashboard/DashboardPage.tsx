@@ -310,7 +310,7 @@ export function DashboardPage() {
             {data.recentActivity.length === 0 ? (
               <p className="field-hint">Aún no hay movimientos registrados.</p>
             ) : (
-              <div>
+              <div className="activity-list">
                 {data.recentActivity.map((item) => {
                   const Icon = activityIcons[item.type] ?? CircleDollarSign;
                   return (

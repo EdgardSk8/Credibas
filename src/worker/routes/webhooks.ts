@@ -114,7 +114,12 @@ webhookRoutes.post('/billing/:provider', async (c) => {
 
   await activateSubscriptionForPeriod(
     db,
-    { orgId: payload.orgId, planId: subscription.plan.id, billingCycle: subscription.billing_cycle },
+    {
+      orgId: payload.orgId,
+      planId: subscription.plan.id,
+      billingCycle: subscription.billing_cycle,
+      graceDays: subscription.plan.grace_days,
+    },
     now,
   );
 

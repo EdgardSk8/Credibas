@@ -1,5 +1,5 @@
 import { Link, NavLink, Outlet, useNavigate } from 'react-router-dom';
-import { Building2, CreditCard, LayoutDashboard, LogOut, ArrowLeft, Shield, Moon, Sparkles } from 'lucide-react';
+import { Boxes, Building2, CreditCard, Inbox, LayoutDashboard, LogOut, ArrowLeft, Shield, Moon, Sparkles, Wallet } from 'lucide-react';
 import { Logo } from '../../components/brand/Logo';
 import { useAuth } from '../../hooks/useAuth';
 import { useTheme } from '../../hooks/useTheme';
@@ -9,6 +9,9 @@ const links = [
   { to: '/admin', label: 'Resumen', icon: LayoutDashboard, end: true },
   { to: '/admin/organizaciones', label: 'Organizaciones', icon: Building2, end: false },
   { to: '/admin/planes', label: 'Planes', icon: CreditCard, end: false },
+  { to: '/admin/catalogo', label: 'Catálogo', icon: Boxes, end: false },
+  { to: '/admin/pagos', label: 'Pagos', icon: Wallet, end: false },
+  { to: '/admin/solicitudes', label: 'Solicitudes', icon: Inbox, end: false },
 ];
 
 export function AdminLayout() {

@@ -26,3 +26,11 @@ PASSWORD_ITERATIONS=100000
 
 # Webhook de facturación
 # BILLING_WEBHOOK_SECRET=cambia-esto-por-un-secreto-largo
+
+# LAFISE (cobro automático con tarjeta). Sin credenciales el motor emite
+# factura y aviso, pero no cobra. Ver docs/PAGOS-LAFISE.md
+# PAYMENTS_PROVIDER=lafise
+# LAFISE_API_BASE=
+# LAFISE_MERCHANT_ID=
+# LAFISE_API_KEY=
+# LAFISE_WEBHOOK_SECRET=

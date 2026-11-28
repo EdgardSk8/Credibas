@@ -34,7 +34,7 @@ Con `EMAIL_PROVIDER=console`, los correos se imprimen en la consola del servidor
 | `APP_NAME` | Var | No | Nombre visible. |
 | `APP_URL` | Var | Sí | Origen público canónico; se usa en enlaces de correo y validación CSRF. |
 | `EMAIL_PROVIDER` | Var | Sí | `console`, `cloudflare`, `resend` o `relay`. |
-| `PAYMENTS_PROVIDER` | Var | Sí | `manual` por defecto; reservado para el proveedor real. |
+| `PAYMENTS_PROVIDER` | Var | Sí | `manual` (sin cobro automático) o `lafise`. Ver [PAGOS-LAFISE.md](PAGOS-LAFISE.md). |
 | `TURNSTILE_SECRET` | Secret | Producción | Clave secreta de Turnstile. Sin ella, el registro falla cerrado en producción. |
 | `TURNSTILE_SITE_KEY` | Var | Producción | Site key pública del widget; el cliente la obtiene de `/api/public/config`. |
 | `RESEND_API_KEY` | Secret | No | Requerida si `EMAIL_PROVIDER=resend`. |
@@ -44,6 +44,10 @@ Con `EMAIL_PROVIDER=console`, los correos se imprimen en la consola del servidor
 | `MAIL_RELAY_SECRET` | Secret | No | Secreto compartido con el relay; requerido si `EMAIL_PROVIDER=relay`. |
 | `PASSWORD_ITERATIONS` | Var | No | Iteraciones PBKDF2. Por defecto 100.000. En pruebas se baja a 10.000. |
 | `BILLING_WEBHOOK_SECRET` | Secret | No | Secreto HMAC para webhooks de facturación. |
+| `LAFISE_API_BASE` | Secret | No | Base de la API del banco. Sin ella, el adaptador LAFISE no cobra. |
+| `LAFISE_MERCHANT_ID` | Secret | No | Identificador de comercio (cuenta central de Credibas). |
+| `LAFISE_API_KEY` | Secret | No | Clave de la API de LAFISE. |
+| `LAFISE_WEBHOOK_SECRET` | Secret | No | Secreto para verificar notificaciones del banco (pendiente de documentación). |
 
 ## Configurar secretos en producción
 

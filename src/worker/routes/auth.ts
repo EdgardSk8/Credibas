@@ -1,14 +1,14 @@
 import { Hono } from 'hono';
-import { deleteCookie, setCookie } from 'hono/cookie';
+import { deleteCookie } from 'hono/cookie';
 import type { Context } from 'hono';
 import { dbFrom } from '../db';
 import { AppError } from '../lib/errors';
 import { hashToken } from '../lib/crypto';
+import { setSessionCookie } from '../lib/session-cookie';
 import { parseBody } from '../middleware/core';
 import { requireAuth, requireVerifiedEmail } from '../middleware/guards';
 import {
   SESSION_COOKIE,
-  SESSION_TTL_MS,
   listUserSessions,
   revokeOtherSessions,
   revokeSession,
@@ -40,20 +40,6 @@ import type { MeResponse, MembershipSummary } from '../../shared/types';
 import type { AppEnv } from '../types';
 
 export const authRoutes = new Hono<AppEnv>();
-
-function isSecure(c: Context<AppEnv>): boolean {
-  return new URL(c.req.url).protocol === 'https:';
-}
-
-function setSessionCookie(c: Context<AppEnv>, token: string): void {
-  setCookie(c, SESSION_COOKIE, token, {
-    httpOnly: true,
-    secure: isSecure(c),
-    sameSite: 'Lax',
-    path: '/',
-    maxAge: Math.floor(SESSION_TTL_MS / 1000),
-  });
-}
 
 function clearSessionCookie(c: Context<AppEnv>): void {
   deleteCookie(c, SESSION_COOKIE, { path: '/' });
@@ -99,6 +85,7 @@ export async function buildMeResponse(c: Context<AppEnv>): Promise<MeResponse | 
     memberships: mapped,
     activeOrgId,
     onboardingComplete: memberships.length > 0,
+    isDemo: c.get('isDemo'),
   };
 }
 

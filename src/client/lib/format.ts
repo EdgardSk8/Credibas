@@ -1,4 +1,5 @@
 import { CURRENCY_META, formatMoney as formatMoneyShared } from '@shared/finance/money';
+import { diffDays } from '@shared/finance/dates';
 import type { Currency } from '@shared/finance/types';
 
 export function money(cents: number, currency: Currency = 'NIO'): string {
@@ -60,6 +61,25 @@ export function todayDateOnly(): string {
     day: '2-digit',
   });
   return formatter.format(new Date());
+}
+
+/** Días de calendario que faltan para una fecha (negativo si ya pasó). */
+export function daysUntil(value: string | null | undefined, timezone = 'America/Managua'): number | null {
+  if (!value) return null;
+
+  let endDate = value;
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(value)) {
+    const parsed = new Date(value);
+    if (Number.isNaN(parsed.getTime())) return null;
+    endDate = new Intl.DateTimeFormat('en-CA', {
+      timeZone: timezone,
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+    }).format(parsed);
+  }
+
+  return diffDays(todayDateOnly(), endDate);
 }
 
 export function firstDayOfMonth(dateOnly = todayDateOnly()): string {

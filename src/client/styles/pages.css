@@ -1,7 +1,7 @@
 /* ------------------------------------------------------------------ Landing */
 .hero {
   position: relative;
-  padding: clamp(4.5rem, 9vw, 8rem) 0 clamp(3rem, 6vw, 5rem);
+  padding: clamp(2rem, 4vw, 3.5rem) 0 clamp(1.75rem, 3.5vw, 3rem);
   overflow: hidden;
 }
 
@@ -256,10 +256,27 @@
   background: var(--surface-1);
   padding: var(--space-6);
   display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
   align-content: start;
   gap: var(--space-3);
+  column-gap: 0.75rem;
   overflow: hidden;
   transition: border-color var(--normal) var(--ease);
+}
+
+.bento-item > .bento-icon {
+  grid-row: 1;
+  grid-column: 1;
+}
+
+.bento-item > h3 {
+  grid-column: 2;
+  align-self: center;
+}
+
+.bento-item > p,
+.bento-item > .bento-visual {
+  grid-column: 1 / -1;
 }
 
 .bento-item:hover {
@@ -278,12 +295,17 @@
 .bento-icon {
   display: grid;
   place-items: center;
-  width: 34px;
-  height: 34px;
-  border-radius: 9px;
+  width: 42px;
+  height: 42px;
+  border-radius: 12px;
   border: 1px solid var(--border-accent);
-  background: var(--accent-soft);
+  background: linear-gradient(160deg, rgba(var(--accent-rgb), 0.22), var(--accent-soft));
   color: var(--accent-ink);
+}
+
+.bento-icon svg {
+  width: 22px;
+  height: 22px;
 }
 
 .bento-visual {
@@ -316,9 +338,15 @@
 }
 
 .bento-feature {
+  border-color: var(--border-accent);
   background:
-    radial-gradient(520px 260px at 85% 0%, rgba(var(--accent-rgb), 0.1), transparent 70%),
+    radial-gradient(560px 280px at 88% 0%, rgba(var(--accent-rgb), 0.16), transparent 70%),
     var(--surface-1);
+  box-shadow: 0 18px 46px -34px rgba(var(--accent-rgb), 0.55);
+}
+
+.bento-feature:hover {
+  border-color: rgba(var(--accent-rgb), 0.7);
 }
 
 .loan-preview {
@@ -426,6 +454,8 @@
   grid-template-columns: 1.6fr 1fr 0.8fr;
   gap: var(--space-2);
   padding: 0.55rem 0.65rem;
+  justify-items: center;
+  text-align: center;
   background: var(--surface-1);
   font-size: 11px;
   color: var(--text-muted);
@@ -441,12 +471,12 @@
   line-height: 1.35;
 }
 
-.bento-feature .mini-table-row > :nth-child(2) {
-  text-align: right;
-}
-
 .bento-feature .mini-table-row .due {
   white-space: nowrap;
+}
+
+.due-corto {
+  display: none;
 }
 
 .mini-table-row.head {
@@ -469,7 +499,6 @@
 }
 
 .mini-table-row .status {
-  justify-self: start;
   padding: 3px 9px;
   border-radius: 999px;
   font-size: 10px;
@@ -845,6 +874,29 @@
   max-width: 44ch;
 }
 
+.auth-aside-img {
+  justify-self: start;
+  width: auto;
+  max-width: 100%;
+  height: clamp(150px, calc(100dvh - 660px), 240px);
+  border: 1px solid var(--border-accent);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+  object-fit: cover;
+}
+
+@media (max-height: 819px) {
+  .auth-aside-img {
+    height: 96px;
+  }
+}
+
+@media (max-height: 719px) {
+  .auth-aside-img {
+    display: none;
+  }
+}
+
 .auth-aside-copy h2 {
   font-size: clamp(1.8rem, 3vw, 2.5rem);
 }
@@ -1072,6 +1124,34 @@
   color: var(--text-faint);
 }
 
+.activity-list {
+  max-height: 330px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding-right: 6px;
+  margin-right: -6px;
+}
+
+/* Barra dorada del tema, algo más fina por ser un panel estrecho. */
+.activity-list::-webkit-scrollbar {
+  width: 8px;
+}
+
+.activity-list::-webkit-scrollbar-track {
+  background: rgba(var(--accent-rgb), 0.08);
+  border-radius: 999px;
+}
+
+.activity-list::-webkit-scrollbar-thumb {
+  background: var(--accent);
+  border-radius: 999px;
+  border: 2px solid var(--surface-1);
+}
+
+.activity-list::-webkit-scrollbar-thumb:hover {
+  background: var(--accent-hover);
+}
+
 .activity-item {
   display: flex;
   gap: 0.65rem;
@@ -1150,6 +1230,41 @@
 
 .meta-row strong {
   font-weight: 600;
+  text-align: right;
+}
+
+.days-left {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  color: var(--success);
+}
+
+.days-left::before {
+  content: '';
+  width: 7px;
+  height: 7px;
+  flex: none;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+.days-left--soon {
+  color: var(--warning);
+}
+
+.days-left--late {
+  color: var(--danger);
+}
+
+.days-left--muted {
+  color: var(--text-faint);
+}
+
+.days-left-hint {
+  margin-top: calc(var(--space-2) * -1);
+  font-size: var(--text-xs);
+  color: var(--danger);
   text-align: right;
 }
 
@@ -1251,7 +1366,7 @@
   }
 
   .hero {
-    padding-top: clamp(3rem, 7vw, 5rem);
+    padding-top: clamp(1.5rem, 3vw, 2.25rem);
   }
 
   .hero-visual {
@@ -1327,9 +1442,220 @@
   }
 
   .bento-feature .mini-table-row {
-    grid-template-columns: 0.5fr 0.95fr 1.5fr 0.9fr;
+    grid-template-columns: 0.5fr 1.05fr 1.1fr 1fr;
     font-size: 11px;
     padding: 0.55rem 0.5rem;
     gap: 0.35rem;
+  }
+
+  .due-largo {
+    display: none;
+  }
+
+  .due-corto {
+    display: inline;
+  }
+}
+
+/* ------------------------------------------------------------------ Panel en móvil */
+@media (max-width: 640px) {
+  /* Contenedor y tarjetas: densidad de aplicación, no de landing */
+  .app-shell .app-content {
+    padding: 14px 12px 72px;
+  }
+
+  .app-shell .card {
+    padding: 12px;
+    border-radius: 12px;
+  }
+
+  .app-shell .card-header {
+    margin-bottom: 0.55rem;
+    gap: 0.45rem;
+  }
+
+  .app-shell .card-title {
+    font-size: var(--text-base);
+    gap: 0.35rem;
+  }
+
+  .app-shell .card-title .icon-chip {
+    width: 20px;
+    height: 20px;
+  }
+
+  .app-shell .card-subtitle {
+    margin-left: 0;
+    font-size: 11px;
+    line-height: 1.4;
+  }
+
+  /* Cabecera de página */
+  .app-shell .page-header {
+    align-items: flex-start;
+    gap: 0.5rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .app-shell .page-header h1 {
+    font-size: 1.15rem;
+    line-height: 1.25;
+  }
+
+  .app-shell .page-header p {
+    font-size: 11.5px;
+  }
+
+  .app-shell .page-icon {
+    width: 26px;
+    height: 26px;
+  }
+
+  .app-shell .page-actions {
+    width: 100%;
+    display: flex;
+    gap: 0.4rem;
+  }
+
+  .app-shell .page-actions > * {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .app-shell .page-actions .btn {
+    width: 100%;
+  }
+
+  /* Indicadores en dos columnas, más bajos */
+  .app-shell .kpi-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.5rem;
+  }
+
+  .app-shell .kpi {
+    padding: 0.65rem 0.7rem;
+    border-radius: 10px;
+  }
+
+  .app-shell .kpi-value {
+    font-size: 1.02rem;
+    letter-spacing: -0.02em;
+  }
+
+  .app-shell .kpi-label {
+    font-size: 9px;
+  }
+
+  .app-shell .kpi-meta {
+    font-size: 10px;
+  }
+
+  /* Tablas: compactas, con la primera columna anclada */
+  .app-shell .table-wrap {
+    border-radius: 10px;
+  }
+
+  .app-shell .table {
+    min-width: 540px;
+    font-size: 12px;
+  }
+
+  .app-shell .table th {
+    padding: 0.4rem 0.5rem;
+    font-size: 9px;
+  }
+
+  .app-shell .table td {
+    padding: 0.42rem 0.5rem;
+  }
+
+  .app-shell .table-compact th,
+  .app-shell .table-compact td {
+    padding: 0.32rem 0.45rem;
+  }
+
+  .app-shell .table th:first-child,
+  .app-shell .table td:first-child {
+    position: sticky;
+    left: 0;
+    z-index: 1;
+    background: var(--surface-1);
+  }
+
+  .app-shell .table th:first-child {
+    z-index: 2;
+    background: var(--surface-2);
+  }
+
+  .app-shell .table .cell-actions .btn {
+    min-height: 30px;
+    padding: 0 0.45rem;
+    font-size: 11.5px;
+  }
+
+  /* Controles cómodos para el dedo sin inflar la interfaz */
+  .app-shell .btn {
+    min-height: 38px;
+  }
+
+  .app-shell .btn-sm {
+    min-height: 30px;
+  }
+
+  .app-shell .input,
+  .app-shell .select,
+  .app-shell .textarea {
+    min-height: 38px;
+    font-size: 14px;
+  }
+
+  .app-shell .icon-button {
+    width: 38px;
+    height: 38px;
+  }
+
+  .app-shell input[type='checkbox'],
+  .app-shell input[type='radio'] {
+    width: 18px;
+    height: 18px;
+    accent-color: var(--accent);
+  }
+
+  /* Barras de filtros y formularios */
+  .app-shell .toolbar {
+    flex-wrap: wrap;
+    gap: 0.45rem;
+  }
+
+  .app-shell .toolbar .search,
+  .app-shell .toolbar .input,
+  .app-shell .toolbar .select {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .app-shell .form-grid {
+    grid-template-columns: 1fr;
+    gap: 0.55rem;
+  }
+
+  .app-shell .meta-row {
+    font-size: 13px;
+    gap: 0.4rem;
+  }
+
+  .app-shell .alert {
+    padding: 0.6rem 0.7rem;
+    font-size: 12px;
+  }
+
+  .app-shell .badge {
+    font-size: 10px;
+    padding: 0.1rem 0.4rem;
+  }
+
+  .modal {
+    width: calc(100vw - 24px);
+    max-height: calc(100dvh - 48px);
   }
 }

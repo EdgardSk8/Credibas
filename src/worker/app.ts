@@ -2,6 +2,7 @@ import { Hono } from 'hono';
 import { secureHeaders } from 'hono/secure-headers';
 import { csrfMiddleware, errorHandler, requestIdMiddleware } from './middleware/core';
 import { organizationMiddleware, sessionMiddleware } from './middleware/session';
+import { blockDemoWrites } from './middleware/guards';
 import { authRoutes } from './routes/auth';
 import { organizationRoutes } from './routes/organizations';
 import { clientRoutes } from './routes/clients';
@@ -44,6 +45,7 @@ app.use('/api/*', async (c, next) => {
 app.use('/api/*', csrfMiddleware);
 app.use('/api/*', sessionMiddleware);
 app.use('/api/*', organizationMiddleware);
+app.use('/api/*', blockDemoWrites);
 
 app.route('/api/auth', authRoutes);
 app.route('/api/organizations', organizationRoutes);

@@ -30,7 +30,7 @@ export function PricingPage() {
               Un plan para cada tamaño de <em>cartera</em>
             </h1>
             <p className="hero-sub">
-              Todos los planes incluyen 14 días de prueba con funcionalidades completas. Sin tarjeta obligatoria para
+              Todos los planes incluyen 15 días de prueba con funcionalidades completas. Sin tarjeta obligatoria para
               comenzar y sin cargos ocultos.
             </p>
           </div>

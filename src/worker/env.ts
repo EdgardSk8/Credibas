@@ -137,4 +137,13 @@ export interface Env {
   PASSWORD_ITERATIONS?: string;
   /** Clave para webhooks de facturación. */
   BILLING_WEBHOOK_SECRET?: string;
+
+  /**
+   * Credenciales del adaptador LAFISE. Se cargan como secretos del Worker y
+   * nunca en el cliente. Sin ellas, el proveedor se comporta como `manual`.
+   */
+  LAFISE_API_BASE?: string;
+  LAFISE_MERCHANT_ID?: string;
+  LAFISE_API_KEY?: string;
+  LAFISE_WEBHOOK_SECRET?: string;
 }

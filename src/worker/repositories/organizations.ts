@@ -75,9 +75,9 @@ export async function createOrganization(db: Db, input: CreateOrgInput, now: num
 
   statements.push({
     sql: `INSERT INTO organizations (id, name, slug, owner_user_id, currency, timezone, date_format, locale,
-                                     logo_r2_key, status, created_at, updated_at)
-          VALUES (?, ?, ?, ?, ?, ?, 'dd/MM/yyyy', 'es-NI', NULL, 'active', ?, ?)`,
-    params: [orgId, input.name, generateSlug(input.name), input.ownerUserId, input.currency, input.timezone, now, now],
+                                     logo_r2_key, status, free_plan_used_at, created_at, updated_at)
+          VALUES (?, ?, ?, ?, ?, ?, 'dd/MM/yyyy', 'es-NI', NULL, 'active', ?, ?, ?)`,
+    params: [orgId, input.name, generateSlug(input.name), input.ownerUserId, input.currency, input.timezone, now, now, now],
   });
 
   for (const template of ROLE_TEMPLATES) {

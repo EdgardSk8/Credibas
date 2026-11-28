@@ -42,7 +42,7 @@ INSERT INTO plans (
 ) VALUES
   (
     'plan_trial', 'trial', 'Prueba',
-    'Evaluacion completa por 14 dias con limites reducidos.',
+    'Evaluacion completa por 15 dias con limites reducidos.',
     0, 0, 'USD', 14, 7, 1, 0, 0,
     '["Acceso a modulos principales","1 usuario","Hasta 25 prestamos activos","Soporte por correo"]',
     CAST(strftime('%s', 'now') AS INTEGER) * 1000,

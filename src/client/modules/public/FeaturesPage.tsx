@@ -82,7 +82,7 @@ export function FeaturesPage() {
             <div className="hero-actions">
               <Link to="/registro">
                 <Button variant="primary" size="lg">
-                  Probar 14 días
+                  Probar 15 días
                   <ArrowRight size={17} />
                 </Button>
               </Link>

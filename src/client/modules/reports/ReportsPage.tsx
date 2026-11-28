@@ -7,6 +7,7 @@ import { LoadingBlock } from '../../components/ui/EmptyState';
 import { api, buildQuery, errorMessage } from '../../lib/api';
 import { dateShort, money, todayDateOnly } from '../../lib/format';
 import { useAuth } from '../../hooks/useAuth';
+import { useToast } from '../../components/ui/Toasts';
 import { PERMISSIONS } from '@shared/rbac';
 import type { Currency } from '@shared/finance/types';
 
@@ -39,11 +40,48 @@ function monthStart(): string {
   return `${todayDateOnly().slice(0, 7)}-01`;
 }
 
+/** Nombre sugerido por el servidor (`filename*` tiene prioridad sobre `filename`). */
+function fileNameFromDisposition(header: string | null): string {
+  if (!header) return 'Cartera.xlsx';
+  const utf8 = /filename\*=UTF-8''([^;]+)/i.exec(header);
+  if (utf8?.[1]) return decodeURIComponent(utf8[1]);
+  const simple = /filename="?([^";]+)"?/i.exec(header);
+  return simple?.[1] ?? 'Cartera.xlsx';
+}
+
 export function ReportsPage() {
   const { activeMembership, hasPermission } = useAuth();
+  const toast = useToast();
   const [currency, setCurrency] = useState<Currency>((activeMembership?.currency as Currency) ?? 'NIO');
   const [from, setFrom] = useState(monthStart());
   const [to, setTo] = useState(todayDateOnly());
+  const [exporting, setExporting] = useState(false);
+
+  const exportPortfolio = async () => {
+    setExporting(true);
+    try {
+      const response = await fetch(`/api/reports/export/portfolio.xlsx${buildQuery({ currency })}`, {
+        headers: { accept: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' },
+      });
+      if (!response.ok) {
+        throw new Error('No se pudo generar el archivo. Intenta de nuevo.');
+      }
+
+      const blob = await response.blob();
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = fileNameFromDisposition(response.headers.get('content-disposition'));
+      document.body.append(link);
+      link.click();
+      link.remove();
+      URL.revokeObjectURL(url);
+    } catch (error) {
+      toast.error(errorMessage(error));
+    } finally {
+      setExporting(false);
+    }
+  };
 
   const portfolioQuery = useQuery({
     queryKey: ['report-portfolio', currency],
@@ -98,9 +136,8 @@ export function ReportsPage() {
               <Button
                 variant="secondary"
                 icon={<Download size={16} />}
-                onClick={() => {
-                  window.location.href = `/api/reports/export/portfolio.csv?currency=${currency}`;
-                }}
+                loading={exporting}
+                onClick={exportPortfolio}
               >
                 Exportar cartera
               </Button>

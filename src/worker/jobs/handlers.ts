@@ -4,8 +4,10 @@ import { sendEmail } from '../services/mailer';
 import { purgeExpiredTokens } from '../repositories/tokens';
 import { refreshOverdueInstallments } from '../repositories/loans';
 import { refreshExpiredSubscriptions } from '../repositories/subscriptions';
+import { runBillingCycle } from '../services/billing-cycle';
 import { purgeRateLimits } from '../repositories/rate-limits';
 import { deleteExpiredSessions } from '../repositories/sessions';
+import { enqueueJob } from './queue';
 import { calculateLateFeeCents } from '../../shared/finance/late-fees';
 import { addDays, todayInTimezone } from '../../shared/finance/dates';
 import { newId } from '../lib/crypto';
@@ -50,6 +52,12 @@ async function processJob(env: Env, job: JobMessage): Promise<void> {
 
     case 'billing.expire-subscriptions': {
       await refreshExpiredSubscriptions(db, now);
+      return;
+    }
+
+    case 'billing.charge-due': {
+      const result = await runBillingCycle(env, now);
+      if (result.due > 0) console.log('[billing] ciclo ejecutado', result);
       return;
     }
 
@@ -226,4 +234,7 @@ export async function runScheduled(env: Env, controller: ScheduledController): P
     await env.JOBS.send({ type: 'cleanup.tokens' } satisfies JobMessage);
     await env.JOBS.send({ type: 'billing.expire-subscriptions' } satisfies JobMessage);
   }
+
+  // Cada 15 minutos: emite la renovación y ejecuta el cobro cuando corresponde.
+  await enqueueJob(env, { type: 'billing.charge-due' });
 }

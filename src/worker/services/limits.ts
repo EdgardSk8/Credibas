@@ -1,5 +1,6 @@
 import type { Db } from '../db';
 import { AppError } from '../lib/errors';
+import { applyAddonLimits } from '../../shared/billing/pricing';
 import { getOrgUsage, getSubscription, getPlanLimits } from '../repositories/subscriptions';
 
 export const LIMIT_LABELS: Record<string, string> = {
@@ -31,7 +32,18 @@ export async function getLimitState(db: Db, orgId: string): Promise<LimitState> 
     return { planKey: 'none', limits: {}, usage: {} };
   }
 
-  const limits = await getPlanLimits(db, subscription.plan.id);
+  const planLimits = await getPlanLimits(db, subscription.plan.id);
+  const addonRows = await db.all<{ metric: string; unit_amount: number; quantity: number }>(
+    `SELECT a.metric, a.unit_amount, sa.quantity
+       FROM subscription_addons sa
+       JOIN addons a ON a.id = sa.addon_id
+      WHERE sa.subscription_id = ? AND sa.status = 'active' AND (sa.ends_at IS NULL OR sa.ends_at > ?)`,
+    [subscription.id, Date.now()],
+  );
+  const limits = applyAddonLimits(
+    planLimits,
+    addonRows.map((row) => ({ metric: row.metric, unitAmount: Number(row.unit_amount), quantity: Number(row.quantity) })),
+  );
   const orgUsage = await getOrgUsage(db, orgId);
 
   return {

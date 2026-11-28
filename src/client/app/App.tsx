@@ -50,6 +50,18 @@ const AdminOrganizationsPage = lazy(() =>
   import('../modules/admin/AdminOrganizationsPage').then((m) => ({ default: m.AdminOrganizationsPage })),
 );
 const AdminPlansPage = lazy(() => import('../modules/admin/AdminPlansPage').then((m) => ({ default: m.AdminPlansPage })));
+const AdminRequestsPage = lazy(() =>
+  import('../modules/admin/AdminRequestsPage').then((m) => ({ default: m.AdminRequestsPage })),
+);
+const AdminCatalogPage = lazy(() =>
+  import('../modules/admin/AdminCatalogPage').then((m) => ({ default: m.AdminCatalogPage })),
+);
+const AdminPaymentsPage = lazy(() =>
+  import('../modules/admin/AdminPaymentsPage').then((m) => ({ default: m.AdminPaymentsPage })),
+);
+const AdminOrgSubscriptionPage = lazy(() =>
+  import('../modules/admin/AdminOrgSubscriptionPage').then((m) => ({ default: m.AdminOrgSubscriptionPage })),
+);
 
 function FullPageLoader() {
   return (
@@ -157,6 +169,10 @@ export function App() {
         <Route index element={<AdminOverviewPage />} />
         <Route path="organizaciones" element={<AdminOrganizationsPage />} />
         <Route path="planes" element={<AdminPlansPage />} />
+        <Route path="solicitudes" element={<AdminRequestsPage />} />
+        <Route path="catalogo" element={<AdminCatalogPage />} />
+        <Route path="pagos" element={<AdminPaymentsPage />} />
+        <Route path="organizaciones/:id/suscripcion" element={<AdminOrgSubscriptionPage />} />
       </Route>
 
       <Route path="*" element={<NotFoundPage />} />

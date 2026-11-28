@@ -48,6 +48,16 @@ export function AuthShell({ title, subtitle, children, footer }: AuthShellProps)
           </div>
         </div>
 
+        <img
+          className="auth-aside-img"
+          src="/og/inicio.png"
+          alt=""
+          width={1200}
+          height={630}
+          decoding="async"
+          aria-hidden="true"
+        />
+
         <p style={{ fontSize: 'var(--text-xs)', color: 'var(--text-faint)' }}>
           © {new Date().getFullYear()} Credibas · Gestión profesional de créditos
         </p>

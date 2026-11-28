@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { Building2, Search } from 'lucide-react';
 import { PageHeader } from '../../components/ui/PageHeader';
@@ -176,6 +177,11 @@ export function AdminOrganizationsPage() {
                       </Badge>
                     </td>
                     <td className="cell-actions">
+                      <Link to={`/admin/organizaciones/${org.id}/suscripcion`}>
+                        <Button variant="ghost" size="sm">
+                          Suscripción
+                        </Button>
+                      </Link>
                       <Button variant="ghost" size="sm" onClick={() => setEditing(org)}>
                         Gestionar
                       </Button>

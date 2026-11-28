@@ -12,6 +12,8 @@ export interface SessionRow {
   last_used_at: number;
   expires_at: number;
   revoked_at: number | null;
+  /** 1 = sesión pública de demo: solo lectura y sin panel de plataforma. */
+  is_demo: number;
 }
 
 export interface SessionWithUser extends SessionRow {
@@ -27,14 +29,33 @@ export const SESSION_TTL_MS = 30 * 24 * 60 * 60 * 1000;
 
 export async function createSession(
   db: Db,
-  input: { userId: string; orgId: string | null; tokenHash: string; ip: string | null; userAgent: string | null },
+  input: {
+    userId: string;
+    orgId: string | null;
+    tokenHash: string;
+    ip: string | null;
+    userAgent: string | null;
+    isDemo?: boolean;
+    ttlMs?: number;
+  },
   now: number,
 ): Promise<string> {
   const id = newId('ses');
   await db.run(
-    `INSERT INTO sessions (id, user_id, org_id, token_hash, ip, user_agent, created_at, last_used_at, expires_at, revoked_at)
-     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, NULL)`,
-    [id, input.userId, input.orgId, input.tokenHash, input.ip, input.userAgent, now, now, now + SESSION_TTL_MS],
+    `INSERT INTO sessions (id, user_id, org_id, token_hash, ip, user_agent, created_at, last_used_at, expires_at, revoked_at, is_demo)
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, NULL, ?)`,
+    [
+      id,
+      input.userId,
+      input.orgId,
+      input.tokenHash,
+      input.ip,
+      input.userAgent,
+      now,
+      now,
+      now + (input.ttlMs ?? SESSION_TTL_MS),
+      input.isDemo ? 1 : 0,
+    ],
   );
   return id;
 }
@@ -42,7 +63,7 @@ export async function createSession(
 export async function findSessionByTokenHash(db: Db, tokenHash: string): Promise<SessionWithUser | null> {
   return db.first<SessionWithUser>(
     `SELECT s.id, s.user_id, s.org_id, s.token_hash, s.ip, s.user_agent, s.created_at, s.last_used_at,
-            s.expires_at, s.revoked_at, u.email, u.full_name, u.email_verified_at, u.is_platform_admin,
+            s.expires_at, s.revoked_at, s.is_demo, u.email, u.full_name, u.email_verified_at, u.is_platform_admin,
             u.status AS user_status
        FROM sessions s
        JOIN users u ON u.id = s.user_id

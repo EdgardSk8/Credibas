@@ -1,4 +1,6 @@
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { useState } from 'react';
+import { useQueryClient } from '@tanstack/react-query';
 import {
   ArrowRight,
   BellRing,
@@ -18,6 +20,8 @@ import {
 import { Button } from '../../components/ui/Button';
 import { PlanCard } from '../../components/marketing/PlanCard';
 import { usePublicPlans } from '../../hooks/usePlans';
+import { useToast } from '../../components/ui/Toasts';
+import { api, errorMessage } from '../../lib/api';
 
 const collectionSeries = [
   { label: '28 sep', amount: 6850 },
@@ -72,6 +76,24 @@ const faqs = [
 
 export function LandingPage() {
   const { plans } = usePublicPlans();
+  const navigate = useNavigate();
+  const toast = useToast();
+  const queryClient = useQueryClient();
+  const [demoLoading, setDemoLoading] = useState(false);
+
+  const openDemo = async () => {
+    setDemoLoading(true);
+    try {
+      await api.post('/api/public/demo');
+      // La cookie cambia: hay que releer la sesión antes de entrar al panel.
+      await queryClient.invalidateQueries({ queryKey: ['me'] });
+      navigate('/app');
+    } catch (error) {
+      toast.error(errorMessage(error));
+    } finally {
+      setDemoLoading(false);
+    }
+  };
 
   return (
     <>
@@ -80,13 +102,13 @@ export function LandingPage() {
           <div className="hero-copy">
             <span className="eyebrow">Gestión financiera para prestamistas</span>
             <h1>
-              Controla tus créditos.
+              Controla tus créditos
               <br />
-              <em>Domina tus finanzas.</em>
+              <em>Domina tus finanzas</em>
             </h1>
             <p className="hero-sub">
-              Administra préstamos, clientes, cuotas y cobros desde una plataforma diseñada para mantener tu negocio
-              financiero organizado, con números reales y trazabilidad en cada operación.
+              Registra clientes y préstamos, genera el calendario de cuotas y aplica pagos con distribución automática
+              entre mora, interés y capital. Controla caja, cartera y vencimientos; cada operación queda auditada.
             </p>
             <div className="hero-actions">
               <Link to="/registro">
@@ -95,15 +117,18 @@ export function LandingPage() {
                   <ArrowRight size={17} />
                 </Button>
               </Link>
+              <Button variant="secondary" size="lg" onClick={openDemo} loading={demoLoading}>
+                Ver demo
+              </Button>
               <Link to="/funcionalidades">
-                <Button variant="secondary" size="lg">
+                <Button variant="ghost" size="lg">
                   Conocer funcionalidades
                 </Button>
               </Link>
             </div>
             <div className="hero-trust">
               <span>
-                <Check size={14} /> 14 días de prueba
+                <Check size={14} /> 15 días de prueba
               </span>
               <span>
                 <Check size={14} /> Sin tarjeta obligatoria
@@ -195,15 +220,18 @@ export function LandingPage() {
                     <span>Estado</span>
                   </div>
                   {[
-                    ['#01', 'C$ 4,250.00', '12 de noviembre de 2026', 'Pagada'],
-                    ['#02', 'C$ 4,250.00', '12 de diciembre de 2026', 'Pagada'],
-                    ['#03', 'C$ 4,250.00', '12 de enero de 2027', 'Pendiente'],
-                    ['#04', 'C$ 4,250.00', '12 de febrero de 2027', 'Pendiente'],
-                  ].map(([numero, monto, vence, estado], index) => (
+                    ['#01', 'C$ 4,250.00', '12 de noviembre de 2026', '12/11/26', 'Pagada'],
+                    ['#02', 'C$ 4,250.00', '12 de diciembre de 2026', '12/12/26', 'Pagada'],
+                    ['#03', 'C$ 4,250.00', '12 de enero de 2027', '12/01/27', 'Pendiente'],
+                    ['#04', 'C$ 4,250.00', '12 de febrero de 2027', '12/02/27', 'Pendiente'],
+                  ].map(([numero, monto, vence, venceCorto, estado], index) => (
                     <div className="mini-table-row" key={numero}>
                       <b>{numero}</b>
                       <span className="amount">{monto}</span>
-                      <span className="due">{vence}</span>
+                      <span className="due">
+                        <span className="due-largo">{vence}</span>
+                        <span className="due-corto">{venceCorto}</span>
+                      </span>
                       <span className={index < 2 ? 'status ok' : 'status pending'}>{estado}</span>
                     </div>
                   ))}

@@ -36,6 +36,8 @@ export interface MeResponse {
   memberships: MembershipSummary[];
   activeOrgId: string | null;
   onboardingComplete: boolean;
+  /** Sesión pública de demo: solo lectura. */
+  isDemo: boolean;
 }
 
 export interface PlanSummary {
@@ -66,6 +68,53 @@ export interface SubscriptionSummary {
   cancelAtPeriodEnd: boolean;
   usage: UsageSummary[];
   limits: Record<string, number>;
+  freePlanUsed: boolean;
+}
+
+export interface SubscriptionRequestSummary {
+  id: string;
+  orgName: string;
+  planKey: string;
+  planName: string;
+  billingCycle: 'monthly' | 'yearly';
+  status: 'pending' | 'approved' | 'rejected' | 'canceled';
+  note: string | null;
+  adminNote: string | null;
+  requestedBy: string;
+  createdAt: string;
+  resolvedAt: string | null;
+}
+
+export interface CatalogModuleSummary {
+  id: string;
+  key: string;
+  name: string;
+  description: string | null;
+  priceMonthlyCents: number;
+  priceYearlyCents: number;
+  currency: string;
+  isCore: boolean;
+  isActive: boolean;
+  sortOrder: number;
+  features: string[];
+  dependencyKeys: string[];
+  planKeys: string[];
+}
+
+export interface CatalogAddonSummary {
+  id: string;
+  key: string;
+  name: string;
+  description: string | null;
+  metric: string;
+  unitAmount: number;
+  unitLabel: string;
+  priceMonthlyCents: number;
+  priceYearlyCents: number;
+  currency: string;
+  isActive: boolean;
+  sortOrder: number;
+  plans: Array<{ planKey: string; maxQuantity: number }>;
 }
 
 export interface UsageSummary {

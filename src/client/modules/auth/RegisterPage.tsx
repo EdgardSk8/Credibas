@@ -100,7 +100,7 @@ export function RegisterPage() {
   return (
     <AuthShell
       title="Crea tu cuenta"
-      subtitle="14 días de prueba. Sin tarjeta obligatoria."
+      subtitle="15 días de prueba. Sin tarjeta obligatoria."
       footer={
         <>
           ¿Ya tienes cuenta? <Link to="/login" className="link">Inicia sesión</Link>

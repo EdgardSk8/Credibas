@@ -6,7 +6,11 @@
 - `plan_limits`: límites del plan como filas (`users`, `clients`, `active_loans`, `storage_mb`, `collectors`, `branches`, `exports_per_month`, `history_days`).
 - `subscriptions`: una por organización (`UNIQUE(org_id)`), con ciclo mensual/anual y período vigente.
 - `invoices` y `billing_payments`: facturación y pagos, con idempotencia por `(provider, provider_ref)`.
+- `subscription_requests`: solicitudes de cambio de plan (`pending`, `approved`, `rejected`, `canceled`). Una pendiente por organización (índice único parcial).
+- `organizations.free_plan_used_at`: marca el consumo del plan gratuito (una sola vez por negocio).
 - `subscription_events`: bitácora de cambios y confirmaciones.
+- `payment_methods`: tarjeta tokenizada por organización (solo token, marca, últimos cuatro y vencimiento; nunca el número completo ni el CVV).
+- `billing_payments`: además de los pagos confirmados, guarda los **intentos de cobro** con `idempotency_key` única, `attempt_no`, error y `next_retry_at`.
 
 **Los precios y límites se editan desde `/admin/planes`. No hay números fijos en el código.**
 
@@ -14,12 +18,18 @@
 
 | Plan | Mensual | Anual | Usuarios | Clientes | Préstamos activos | Cobradores |
 | --- | --- | --- | --- | --- | --- | --- |
-| Prueba | — | — | 1 | 50 | 25 | 0 |
+| Gratis (una sola vez) | — | — | 1 | 50 | 25 | 0 |
 | Starter | USD 9,90 | USD 99 | 1 | 300 | 150 | 0 |
 | Professional | USD 24,90 | USD 249 | 5 | 2.000 | 1.000 | 5 |
 | Business | USD 49,90 | USD 499 | 15 | 10.000 | 5.000 | 25 |
 
 > ⚠️ Estos valores son **hipótesis** cargadas en la migración de referencia. Antes de publicarlos hay que completar el estudio de mercado (competidores de microfinanzas en Nicaragua y Centroamérica, precios por usuario y por tamaño de cartera, límites de almacenamiento y pruebas gratuitas) y ajustarlos desde el panel.
+>
+> Comparación con precios públicos verificados (2026-11-28): [PRICING-RESEARCH.md](./PRICING-RESEARCH.md).
+>
+> Detalle de planes, límites, módulos y flujo de pago: [PLANES-Y-MODULOS.md](./PLANES-Y-MODULOS.md).
+>
+> Cobros automáticos con tarjeta y verificación de la API de LAFISE: [PAGOS-LAFISE.md](./PAGOS-LAFISE.md).
 
 ## Motor de límites
 
@@ -41,7 +51,7 @@ trialing ──(pago confirmado)──► active ──(fin de período)──�
     └──(cancelación)──► canceled ◄─┘
 ```
 
-- **Prueba**: se crea con la organización (`trial_days` del plan) y límites reducidos.
+- **Gratis**: se activa una sola vez por organización (`free_plan_used_at`), por `trial_days` (15 por defecto). Al terminar no se puede volver a seleccionar: solo queda solicitar un plan de pago.
 - **Activa**: período vigente pagado.
 - **Pago pendiente**: reservado para recordatorios de renovación.
 - **Cancelada**: no renueva; conserva acceso hasta el fin del período pagado.
@@ -51,14 +61,13 @@ trialing ──(pago confirmado)──► active ──(fin de período)──�
 
 ## Activación de un plan de pago
 
-Regla innegociable: **el frontend nunca activa una suscripción**.
+Regla innegociable: **el frontend nunca activa un plan de pago**.
 
-1. La organización solicita el cambio (`POST /api/subscriptions/change-plan`). Se registra el plan y el evento, pero el estado no se activa.
-2. El pago se registra como `billing_payments.status = 'pending'` (manual o por proveedor).
-3. La activación ocurre al confirmar el pago:
-   - Manual: un administrador de plataforma confirma desde el panel (`POST /api/admin/billing-payments/:id/confirm`).
-   - Automático: webhook firmado (`POST /api/webhooks/billing/:provider`).
-4. Al confirmar: se marca la factura como pagada, se extiende el período según el ciclo y se registra el evento y la auditoría.
+1. La organización envía una solicitud (`POST /api/subscriptions/request`). Se guarda en `subscription_requests` con estado `pending` y el plan actual no cambia.
+2. El administrador de plataforma verifica el pago fuera del sistema (transferencia o comprobante) y revisa la cola en `/admin/solicitudes`.
+3. Al aprobar (`POST /api/admin/subscription-requests/:id/approve`) se activa el plan por el ciclo solicitado, se emite la factura como pagada y se registra el evento y la auditoría.
+4. Al rechazar (`POST /api/admin/subscription-requests/:id/reject`) la solicitud se cierra con motivo y la organización puede enviar otra cuando regularice el pago.
+5. Para un proveedor automático sigue disponible el webhook firmado (`POST /api/webhooks/billing/:provider`).
 
 ## Webhook
 
@@ -116,5 +125,5 @@ Recomendación: iniciar con **transferencia + confirmación administrativa** (ya
 
 - No se eliminan datos al expirar. Se bloquea la escritura y se permite consultar/exportar según la política.
 - El período de gracia se configura por plan (`grace_days`).
-- El cambio de plan recalcula límites de inmediato; nunca borra información.
+- Al aprobarse un cambio de plan, los límites se recalculan de inmediato; nunca se borra información.
 - El historial de facturación queda disponible para la organización.

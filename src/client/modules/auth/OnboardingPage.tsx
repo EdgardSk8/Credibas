@@ -96,7 +96,7 @@ export function OnboardingPage() {
               <i>
                 <Check size={11} />
               </i>
-              <span>14 días de prueba con límites iniciales.</span>
+              <span>15 días de prueba con límites iniciales.</span>
             </div>
           </div>
         </div>
@@ -164,7 +164,7 @@ export function OnboardingPage() {
               <div className="alert alert-accent">
                 <Sparkles size={17} />
                 <span>
-                  Empezarás en el plan de prueba por 14 días: hasta 1 usuario, 50 clientes y 25 préstamos activos.
+                  Empezarás en el plan de prueba por 15 días: hasta 1 usuario, 50 clientes y 25 préstamos activos.
                 </span>
               </div>
 

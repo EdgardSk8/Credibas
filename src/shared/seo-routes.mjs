@@ -32,7 +32,7 @@ export const PUBLIC_ROUTES = [
     path: '/',
     title: 'Credibas — Controla tus créditos. Domina tus finanzas.',
     description:
-      'Administra préstamos, clientes, cuotas y cobros desde una plataforma diseñada para mantener tu negocio financiero organizado. Prueba gratis 14 días.',
+      'Gestiona clientes, préstamos y cuotas; pagos con distribución automática y control de caja, cartera y mora. Cada operación auditada. Prueba gratis 15 días.',
     priority: 1.0,
     changeFrequency: 'weekly',
     image: '/og/inicio.png?v=1',
@@ -105,7 +105,7 @@ export const PUBLIC_ROUTES = [
   {
     path: '/registro',
     title: 'Crear cuenta — Credibas',
-    description: 'Crea tu cuenta de Credibas y comienza tu prueba de 14 días.',
+    description: 'Crea tu cuenta de Credibas y comienza tu prueba de 15 días.',
     priority: 0.4,
     changeFrequency: 'yearly',
     schema: 'page',

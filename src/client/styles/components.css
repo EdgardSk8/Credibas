@@ -942,21 +942,27 @@
   align-items: flex-end;
   gap: 6px;
   height: 140px;
+  border-bottom: 1px solid var(--border);
+  background-image: repeating-linear-gradient(to top, var(--border) 0 1px, transparent 1px 25%);
+  background-position: 0 100%;
 }
 
 .bars-bar {
   flex: 1;
-  display: grid;
-  align-content: end;
-  gap: 3px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 4px;
   height: 100%;
+  min-width: 0;
 }
 
 .bars-bar > span {
-  display: block;
+  flex: 1 1 0;
+  max-width: 18px;
+  min-height: 3px;
   border-radius: 4px 4px 2px 2px;
   background: var(--accent);
-  min-height: 3px;
   transition: height var(--slow) var(--ease);
 }
 

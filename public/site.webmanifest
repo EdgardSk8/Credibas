@@ -2,7 +2,7 @@
   "id": "/",
   "name": "Credibas — Gestión de créditos y cartera",
   "short_name": "Credibas",
-  "description": "Administra préstamos, clientes, cuotas y cobros desde una plataforma diseñada para tu negocio financiero.",
+  "description": "Gestiona clientes, préstamos, cuotas, pagos, caja, cartera y mora con cada operación auditada.",
   "start_url": "/app",
   "scope": "/",
   "display": "standalone",

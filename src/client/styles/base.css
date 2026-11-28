@@ -127,17 +127,24 @@ table {
 }
 
 ::-webkit-scrollbar-track {
-  background: transparent;
+  background: rgba(var(--accent-rgb), 0.06);
 }
 
 ::-webkit-scrollbar-thumb {
-  background: rgba(var(--ink-rgb), 0.12);
+  background: var(--accent);
   border-radius: 999px;
   border: 2px solid var(--bg);
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(var(--ink-rgb), 0.2);
+  background: var(--accent-hover);
+}
+
+@supports not selector(::-webkit-scrollbar) {
+  html {
+    scrollbar-width: thin;
+    scrollbar-color: var(--accent) rgba(var(--accent-rgb), 0.06);
+  }
 }
 
 .container {
@@ -311,6 +318,8 @@ html[data-theme='gold'] {
 
   --danger: #b4443a;
   --danger-soft: rgba(180, 68, 58, 0.1);
+  --success: #17784e;
+  --success-soft: rgba(23, 120, 78, 0.12);
   --danger-text: #8e2f27;
   --warning: #8a6516;
   --warning-soft: rgba(212, 175, 55, 0.18);

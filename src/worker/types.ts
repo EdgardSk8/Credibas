@@ -12,6 +12,8 @@ export type AppEnv = {
     userFullName: string | null;
     emailVerified: boolean;
     isPlatformAdmin: boolean;
+    /** Sesión pública de demo: solo lectura. */
+    isDemo: boolean;
     /** Organización activa resuelta desde la membresía, nunca desde el cliente. */
     orgId: string | null;
     orgName: string | null;
